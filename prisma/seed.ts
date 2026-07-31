@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client")
 const { PrismaPg } = require("@prisma/adapter-pg")
 const { Pool } = require("pg")
+const bcrypt = require("bcryptjs")
 require("dotenv/config")
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
@@ -9,6 +10,17 @@ const prisma = new PrismaClient({ adapter })
 
 async function seedDatabase() {
   try {
+    const hashedPassword = await bcrypt.hash("pablo824655", 10)
+    await prisma.user.upsert({
+      where: { email: "pablohga@gmail.com" },
+      update: { role: "ADMIN", password: hashedPassword },
+      create: {
+        name: "Admin Pablo",
+        email: "pablohga@gmail.com",
+        password: hashedPassword,
+        role: "ADMIN",
+      },
+    })
     const images = [
       "https://utfs.io/f/c97a2dc9-cf62-468b-a851-bfd2bdde775f-16p.png",
       "https://utfs.io/f/45331760-899c-4b4b-910e-e00babb6ed81-16q.png",

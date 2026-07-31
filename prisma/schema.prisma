@@ -7,16 +7,23 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String       @id @default(cuid())
   name          String?
-  email         String    @unique
+  email         String       @unique
+  password      String?
+  phone         String?
+  whatsapp      String?
+  address       String?
   emailVerified DateTime?
   image         String?
+  role          String       @default("CLIENT") // CLIENT, BARBERSHOP or ADMIN
   accounts      Account[]
   sessions      Session[]
   bookings      Booking[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  barbershops   Barbershop[]
+  reviews       Review[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model Account {
@@ -65,9 +72,12 @@ model Barbershop {
   phones      String[]
   description String
   imageUrl    String
+  userId      String?
+  user        User?               @relation(fields: [userId], references: [id])
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
   services    BarbershopService[]
+  reviews     Review[]
 }
 
 model BarbershopService {
@@ -77,7 +87,7 @@ model BarbershopService {
   imageUrl     String
   price        Decimal    @db.Decimal(10, 2)
   barbershopId String
-  barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
   bookings     Booking[]
 }
 
@@ -88,6 +98,19 @@ model Booking {
   serviceId String
   service   BarbershopService @relation(fields: [serviceId], references: [id])
   date      DateTime
+  status    String            @default("CONFIRMED") // CONFIRMED, CANCELLED, FINISHED
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
+}
+
+model Review {
+  id           String     @id @default(uuid())
+  rating       Int
+  comment      String?
+  userId       String
+  user         User       @relation(fields: [userId], references: [id])
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }

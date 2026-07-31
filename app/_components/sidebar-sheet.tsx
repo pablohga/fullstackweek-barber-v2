@@ -34,19 +34,27 @@ const SidebarSheet = () => {
             </div>
           </div>
         ) : (
-          <>
-            <h2 className="font-bold">Olá, faça seu login!</h2>
+          <div className="flex w-full flex-col gap-2">
+            <p className="text-sm font-bold">
+              <SheetClose asChild>
+                <Link href="/signup" className="text-primary hover:underline">
+                  Cadastre-se
+                </Link>
+              </SheetClose>{" "}
+              ou faça login
+            </p>
             <Dialog>
               <DialogTrigger asChild>
-                <Button size="icon">
-                  <LogInIcon />
+                <Button size="sm" className="w-full gap-2">
+                  <LogInIcon size={16} />
+                  Fazer Login
                 </Button>
               </DialogTrigger>
               <DialogContent className="w-[90%]">
                 <SignInDialog />
               </DialogContent>
             </Dialog>
-          </>
+          </div>
         )}
       </div>
 
@@ -65,6 +73,53 @@ const SidebarSheet = () => {
             Agendamentos
           </Link>
         </Button>
+        {!data?.user && (
+          <SheetClose asChild>
+            <Button
+              className="justify-start gap-2 font-bold text-primary"
+              variant="ghost"
+              asChild
+            >
+              <Link href="/signup">Cadastre-se</Link>
+            </Button>
+          </SheetClose>
+        )}
+        {data?.user && (
+          <Button className="justify-start gap-2" variant="ghost" asChild>
+            <Link href="/profile">
+              <LogInIcon size={18} />
+              Meu Perfil
+            </Link>
+          </Button>
+        )}
+        {data?.user && (data?.user as any)?.role === "BARBERSHOP" && (
+          <Button
+            className="justify-start gap-2 text-primary"
+            variant="ghost"
+            asChild
+          >
+            <Link href="/barbershop-dashboard">
+              <LogInIcon size={18} />
+              Painel da Barbearia
+            </Link>
+          </Button>
+        )}
+        {data?.user &&
+          ((data?.user as any)?.role === "ADMIN" ||
+            data?.user?.email === "pablohga@gmail.com") && (
+            <SheetClose asChild>
+              <Button
+                className="justify-start gap-2 font-bold text-destructive"
+                variant="ghost"
+                asChild
+              >
+                <Link href="/admin">
+                  <LogInIcon size={18} />
+                  Gerenciar BARBARZONE
+                </Link>
+              </Button>
+            </SheetClose>
+          )}
       </div>
 
       <div className="flex flex-col gap-2 border-b border-solid py-5">

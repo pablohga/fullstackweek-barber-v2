@@ -8,6 +8,9 @@ import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import ReviewForm from "./_components/review-form"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/app/_lib/auth"
 
 interface BarbershopPageProps {
   params: {
@@ -16,19 +19,37 @@ interface BarbershopPageProps {
 }
 
 const BarbershopPage = async ({ params }: BarbershopPageProps) => {
-  // chamar o meu banco de dados
+  const session = await getServerSession(authOptions)
+
   const barbershop = await db.barbershop.findUnique({
     where: {
       id: params.id,
     },
     include: {
       services: true,
+      reviews: {
+        include: {
+          user: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
     },
   })
 
   if (!barbershop) {
     return notFound()
   }
+
+  const totalReviews = barbershop.reviews.length
+  const averageRating =
+    totalReviews > 0
+      ? (
+          barbershop.reviews.reduce((acc, rev) => acc + rev.rating, 0) /
+          totalReviews
+        ).toFixed(1)
+      : "5.0"
 
   return (
     <div>
@@ -76,7 +97,9 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
 
         <div className="flex items-center gap-2">
           <StarIcon className="fill-primary text-primary" size={18} />
-          <p className="text-sm">5,0 (499 avaliações)</p>
+          <p className="text-sm">
+            {averageRating} ({totalReviews} avaliações)
+          </p>
         </div>
       </div>
 
@@ -97,6 +120,39 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
               service={JSON.parse(JSON.stringify(service))}
             />
           ))}
+        </div>
+      </div>
+
+      {/* AVALIAÇÕES / QUALIFICAÇÃO */}
+      <div className="space-y-4 border-b border-solid p-5">
+        <h2 className="text-xs font-bold uppercase text-gray-400">
+          Avaliações e Qualificação
+        </h2>
+        {session?.user && <ReviewForm barbershopId={barbershop.id} />}
+
+        <div className="space-y-3 pt-2">
+          {barbershop.reviews.length === 0 ? (
+            <p className="text-sm text-gray-400">Nenhuma avaliação ainda.</p>
+          ) : (
+            barbershop.reviews.map((review) => (
+              <div key={review.id} className="space-y-1 rounded-lg border p-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-bold">
+                    {review.user?.name || "Cliente"}
+                  </p>
+                  <div className="flex items-center gap-1">
+                    <StarIcon className="fill-primary text-primary" size={14} />
+                    <span className="text-sm font-semibold">
+                      {review.rating}.0
+                    </span>
+                  </div>
+                </div>
+                {review.comment && (
+                  <p className="text-sm text-gray-300">{review.comment}</p>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </div>
 
