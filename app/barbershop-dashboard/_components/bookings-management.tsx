@@ -28,16 +28,26 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [clientFilter, setClientFilter] = useState("")
   const [dateFilter, setDateFilter] = useState("")
+  const [professionalFilter, setProfessionalFilter] = useState("")
 
   const allBookings = barbershop.services.flatMap((service: any) =>
     service.bookings.map((booking: any) => ({
       ...booking,
       serviceName: service.name,
       servicePrice: service.price,
+      professionalName: booking.professional?.name || "Não atribuído",
+      professionalId: booking.professionalId,
     })),
   )
 
-  const concludedBookings = allBookings.filter(
+  const filteredAllBookings = allBookings.filter((booking: any) => {
+    const matchesProfessional = professionalFilter
+      ? booking.professionalId === professionalFilter
+      : true
+    return matchesProfessional
+  })
+
+  const concludedBookings = filteredAllBookings.filter(
     (booking: any) => booking.status === "FINISHED",
   )
 
@@ -68,9 +78,26 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h4 className="text-sm font-semibold uppercase text-gray-400">
-          Gerenciar Agendamentos
-        </h4>
+        <div className="flex flex-wrap items-center gap-3">
+          <h4 className="text-sm font-semibold uppercase text-gray-400">
+            Gerenciar Agendamentos
+          </h4>
+          {barbershop.professionals?.length > 0 && (
+            <select
+              value={professionalFilter}
+              onChange={(e) => setProfessionalFilter(e.target.value)}
+              className="rounded-md border border-input bg-background px-2 py-1 text-xs"
+            >
+              <option value="">Todos os Profissionais</option>
+              {barbershop.professionals.map((prof: any) => (
+                <option key={prof.id} value={prof.id}>
+                  {prof.name}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm" className="gap-2">
@@ -109,7 +136,7 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
               </div>
             </div>
 
-            {/* Listagem com barra de rolagem */}
+            {/* Listagem */}
             <div className="max-h-[50vh] flex-1 space-y-3 overflow-y-auto pr-1 pt-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted [&::-webkit-scrollbar]:w-2">
               {filteredConcludedBookings.length === 0 ? (
                 <p className="py-8 text-center text-sm text-gray-400">
@@ -129,6 +156,12 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
                         </p>
                         <Badge variant="secondary">Finalizado</Badge>
                       </div>
+                      <p className="text-xs text-gray-300">
+                        Profissional:{" "}
+                        <span className="font-semibold text-primary">
+                          {booking.professionalName}
+                        </span>
+                      </p>
                       <p className="text-sm text-gray-300">
                         Cliente:{" "}
                         <span className="font-semibold text-foreground">
@@ -172,12 +205,12 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
         </Dialog>
       </div>
 
-      {allBookings.length === 0 ? (
+      {filteredAllBookings.length === 0 ? (
         <p className="text-sm text-gray-400">
           Nenhum agendamento para esta barbearia ainda.
         </p>
       ) : (
-        allBookings.map((booking: any) => {
+        filteredAllBookings.map((booking: any) => {
           const isConfirmed = booking.status === "CONFIRMED" || !booking.status
           const isFinished = booking.status === "FINISHED"
           const isCancelled = booking.status === "CANCELLED"
@@ -206,6 +239,9 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
                         : "Confirmado"}
                   </Badge>
                 </div>
+                <p className="text-xs font-semibold text-primary">
+                  Profissional: {booking.professionalName}
+                </p>
                 <p className="text-sm text-gray-400">
                   Cliente:{" "}
                   <span className="font-semibold text-foreground">

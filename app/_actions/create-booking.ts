@@ -7,6 +7,7 @@ import { authOptions } from "../_lib/auth"
 
 interface CreateBookingParams {
   serviceId: string
+  professionalId: string
   date: Date
 }
 
@@ -15,9 +16,33 @@ export const createBooking = async (params: CreateBookingParams) => {
   if (!user) {
     throw new Error("Usuário não autenticado")
   }
-  await db.booking.create({
-    data: { ...params, userId: (user.user as any).id },
+
+  if (!params.professionalId) {
+    throw new Error("Profissional não selecionado")
+  }
+
+  const existingBooking = await db.booking.findFirst({
+    where: {
+      professionalId: params.professionalId,
+      date: params.date,
+      status: "CONFIRMED",
+    },
   })
+
+  if (existingBooking) {
+    throw new Error("Este horário já está ocupado para este profissional.")
+  }
+
+  await db.booking.create({
+    data: {
+      serviceId: params.serviceId,
+      professionalId: params.professionalId,
+      date: params.date,
+      userId: (user.user as any).id,
+    },
+  })
+
   revalidatePath("/barbershops/[id]")
   revalidatePath("/bookings")
+  revalidatePath("/barbershop-dashboard")
 }

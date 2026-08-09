@@ -5,6 +5,8 @@ import { db } from "../_lib/prisma"
 import { redirect } from "next/navigation"
 import BarbershopForm from "./_components/barbershop-form"
 import ServiceForm from "./_components/service-form"
+import ProfessionalForm from "./_components/professional-form"
+import ProfessionalsManagement from "./_components/professionals-management"
 import BookingsManagement from "./_components/bookings-management"
 import EditBarbershopModal from "./_components/edit-barbershop-modal"
 
@@ -27,10 +29,12 @@ const BarbershopDashboardPage = async () => {
             include: {
               user: true,
               service: true,
+              professional: true,
             },
           },
         },
       },
+      professionals: true,
     },
   })
 
@@ -51,7 +55,7 @@ const BarbershopDashboardPage = async () => {
         {/* Gerenciar Barbearias, Serviços e Agendamentos */}
         <div className="space-y-6">
           <h2 className="text-lg font-bold">
-            2. Suas Barbearias, Serviços e Agendamentos
+            2. Suas Barbearias, Profissionais, Serviços e Agendamentos
           </h2>
           {barbershops.length === 0 ? (
             <p className="text-gray-400">
@@ -82,8 +86,28 @@ const BarbershopDashboardPage = async () => {
                   />
                 </div>
 
-                {/* Cadastrar Serviço */}
+                {/* Cadastrar Profissional */}
                 <div className="space-y-3">
+                  <h4 className="text-sm font-semibold uppercase text-gray-400">
+                    Cadastrar Profissionais
+                  </h4>
+                  <ProfessionalForm barbershopId={barbershop.id} />
+                </div>
+
+                {/* Lista de Profissionais */}
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold uppercase text-gray-400">
+                    Profissionais Cadastrados
+                  </h4>
+                  <ProfessionalsManagement
+                    professionals={JSON.parse(
+                      JSON.stringify(barbershop.professionals),
+                    )}
+                  />
+                </div>
+
+                {/* Cadastrar Serviço */}
+                <div className="space-y-3 border-t pt-4">
                   <h4 className="text-sm font-semibold uppercase text-gray-400">
                     Cadastrar e Precificar Serviços
                   </h4>

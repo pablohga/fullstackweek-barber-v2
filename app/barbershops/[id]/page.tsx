@@ -27,6 +27,11 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
     },
     include: {
       services: true,
+      professionals: {
+        where: {
+          active: true,
+        },
+      },
       reviews: {
         include: {
           user: true,

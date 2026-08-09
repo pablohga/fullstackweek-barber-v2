@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation"
 
 interface ServiceItemProps {
   service: BarbershopService
-  barbershop: Pick<Barbershop, "name">
+  barbershop: Pick<Barbershop, "name"> & { professionals?: any[] }
 }
 
 const TIME_LIST = [
@@ -84,6 +84,9 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
   const { data } = useSession()
   const router = useRouter()
   const [signInDialogIsOpen, setSignInDialogIsOpen] = useState(false)
+  const [selectedProfessionalId, setSelectedProfessionalId] = useState<
+    string | undefined
+  >(undefined)
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined)
   const [selectedTime, setSelectedTime] = useState<string | undefined>(
     undefined,
@@ -93,15 +96,15 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
 
   useEffect(() => {
     const fetch = async () => {
-      if (!selectedDay) return
+      if (!selectedDay || !selectedProfessionalId) return
       const bookings = await getBookings({
         date: selectedDay,
-        serviceId: service.id,
+        professionalId: selectedProfessionalId,
       })
       setDayBookings(bookings)
     }
     fetch()
-  }, [selectedDay, service.id])
+  }, [selectedDay, selectedProfessionalId])
 
   const selectedDate = useMemo(() => {
     if (!selectedDay || !selectedTime) return
@@ -119,14 +122,23 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
   }
 
   const handleBookingSheetOpenChange = () => {
+    setSelectedProfessionalId(undefined)
     setSelectedDay(undefined)
     setSelectedTime(undefined)
     setDayBookings([])
     setBookingSheetIsOpen(false)
   }
 
+  const handleProfessionalSelect = (profId: string) => {
+    setSelectedProfessionalId(profId)
+    setSelectedDay(undefined)
+    setSelectedTime(undefined)
+    setDayBookings([])
+  }
+
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDay(date)
+    setSelectedTime(undefined)
   }
 
   const handleTimeSelect = (time: string) => {
@@ -135,9 +147,10 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
 
   const handleCreateBooking = async () => {
     try {
-      if (!selectedDate) return
+      if (!selectedDate || !selectedProfessionalId) return
       await createBooking({
         serviceId: service.id,
+        professionalId: selectedProfessionalId,
         date: selectedDate,
       })
       handleBookingSheetOpenChange()
@@ -147,19 +160,19 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
           onClick: () => router.push("/bookings"),
         },
       })
-    } catch (error) {
+    } catch (error: any) {
       console.error(error)
-      toast.error("Erro ao criar reserva!")
+      toast.error(error.message || "Erro ao criar reserva!")
     }
   }
 
   const timeList = useMemo(() => {
-    if (!selectedDay) return []
+    if (!selectedDay || !selectedProfessionalId) return []
     return getTimeList({
       bookings: dayBookings,
       selectedDay,
     })
-  }, [dayBookings, selectedDay])
+  }, [dayBookings, selectedDay, selectedProfessionalId])
 
   return (
     <>
@@ -204,40 +217,85 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                     <SheetTitle>Fazer Reserva</SheetTitle>
                   </SheetHeader>
 
-                  <div className="border-b border-solid py-5">
-                    <Calendar
-                      mode="single"
-                      locale={ptBR}
-                      selected={selectedDay}
-                      onSelect={handleDateSelect}
-                      fromDate={new Date()}
-                      styles={{
-                        head_cell: {
-                          width: "100%",
-                          textTransform: "capitalize",
-                        },
-                        cell: {
-                          width: "100%",
-                        },
-                        button: {
-                          width: "100%",
-                        },
-                        nav_button_previous: {
-                          width: "32px",
-                          height: "32px",
-                        },
-                        nav_button_next: {
-                          width: "32px",
-                          height: "32px",
-                        },
-                        caption: {
-                          textTransform: "capitalize",
-                        },
-                      }}
-                    />
+                  {/* SELECIONAR PROFISSIONAL */}
+                  <div className="space-y-3 border-b border-solid p-5">
+                    <h2 className="text-xs font-bold uppercase text-gray-400">
+                      Selecione o Profissional
+                    </h2>
+                    {barbershop.professionals &&
+                    barbershop.professionals.length > 0 ? (
+                      <div className="grid grid-cols-2 gap-3">
+                        {barbershop.professionals.map((prof: any) => (
+                          <div
+                            key={prof.id}
+                            onClick={() => handleProfessionalSelect(prof.id)}
+                            className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-all ${
+                              selectedProfessionalId === prof.id
+                                ? "border-primary bg-primary/10"
+                                : "hover:border-gray-400"
+                            }`}
+                          >
+                            <div className="relative h-10 w-10 overflow-hidden rounded-full">
+                              <Image
+                                src={
+                                  prof.imageUrl ||
+                                  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop"
+                                }
+                                alt={prof.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold">{prof.name}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-red-500">
+                        Nenhum profissional disponível para esta barbearia no
+                        momento.
+                      </p>
+                    )}
                   </div>
 
-                  {selectedDay && (
+                  {selectedProfessionalId && (
+                    <div className="border-b border-solid py-5">
+                      <Calendar
+                        mode="single"
+                        locale={ptBR}
+                        selected={selectedDay}
+                        onSelect={handleDateSelect}
+                        fromDate={new Date()}
+                        styles={{
+                          head_cell: {
+                            width: "100%",
+                            textTransform: "capitalize",
+                          },
+                          cell: {
+                            width: "100%",
+                          },
+                          button: {
+                            width: "100%",
+                          },
+                          nav_button_previous: {
+                            width: "32px",
+                            height: "32px",
+                          },
+                          nav_button_next: {
+                            width: "32px",
+                            height: "32px",
+                          },
+                          caption: {
+                            textTransform: "capitalize",
+                          },
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {selectedDay && selectedProfessionalId && (
                     <div className="flex gap-3 overflow-x-auto border-b border-solid p-5 [&::-webkit-scrollbar]:hidden">
                       {timeList.length > 0 ? (
                         timeList.map((time) => (
@@ -254,7 +312,8 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                         ))
                       ) : (
                         <p className="text-xs">
-                          Não há horários disponíveis para este dia.
+                          Não há horários disponíveis para este profissional
+                          neste dia.
                         </p>
                       )}
                     </div>
@@ -272,7 +331,9 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                   <SheetFooter className="mt-5 px-5">
                     <Button
                       onClick={handleCreateBooking}
-                      disabled={!selectedDay || !selectedTime}
+                      disabled={
+                        !selectedProfessionalId || !selectedDay || !selectedTime
+                      }
                     >
                       Confirmar
                     </Button>

@@ -110,10 +110,12 @@ const ProfilePage = async () => {
   const isClient = role === "CLIENT"
 
   const activeBookings = user.bookings.filter(
-    (booking) => isFuture(booking.date) && booking.status !== "CANCELLED",
+    (booking) => isFuture(booking.date) && booking.status === "CONFIRMED",
   )
   const concludedBookings = user.bookings.filter(
-    (booking) => !isFuture(booking.date) || booking.status === "FINISHED",
+    (booking) =>
+      (!isFuture(booking.date) && booking.status === "CONFIRMED") ||
+      booking.status === "FINISHED",
   )
 
   return (
@@ -230,19 +232,20 @@ const ProfilePage = async () => {
               )}
             </div>
 
-            {/* Agendamentos Finalizados */}
+            {/* Agendamentos Finalizados / Histórico */}
             <div className="space-y-4 pt-2">
               <div className="flex items-center gap-2">
                 <div className="h-2.5 w-2.5 rounded-full bg-muted-foreground" />
                 <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                  Agendamentos Finalizados ({concludedBookings.length})
+                  Histórico (Finalizados / Expirados) (
+                  {concludedBookings.length})
                 </h2>
               </div>
 
               {concludedBookings.length === 0 ? (
                 <Card className="border-dashed bg-card/20 p-6 text-center">
                   <p className="text-sm text-muted-foreground">
-                    Nenhum agendamento finalizado encontrado.
+                    Nenhum agendamento no histórico encontrado.
                   </p>
                 </Card>
               ) : (

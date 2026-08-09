@@ -67,18 +67,31 @@ model VerificationToken {
 }
 
 model Barbershop {
-  id          String              @id @default(uuid())
-  name        String
-  address     String
-  phones      String[]
-  description String
-  imageUrl    String
-  userId      String?
-  user        User?               @relation(fields: [userId], references: [id])
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  services    BarbershopService[]
-  reviews     Review[]
+  id            String              @id @default(uuid())
+  name          String
+  address       String
+  phones        String[]
+  description   String
+  imageUrl      String
+  userId        String?
+  user          User?               @relation(fields: [userId], references: [id])
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  services      BarbershopService[]
+  professionals Professional[]
+  reviews       Review[]
+}
+
+model Professional {
+  id           String     @id @default(uuid())
+  name         String
+  imageUrl     String?
+  active       Boolean    @default(true)
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
+  bookings     Booking[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 model BarbershopService {
@@ -93,15 +106,17 @@ model BarbershopService {
 }
 
 model Booking {
-  id        String            @id @default(uuid())
-  userId    String
-  user      User              @relation(fields: [userId], references: [id])
-  serviceId String
-  service   BarbershopService @relation(fields: [serviceId], references: [id])
-  date      DateTime
-  status    String            @default("CONFIRMED") // CONFIRMED, CANCELLED, FINISHED
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
+  id             String            @id @default(uuid())
+  userId         String
+  user           User              @relation(fields: [userId], references: [id])
+  serviceId      String
+  service        BarbershopService @relation(fields: [serviceId], references: [id])
+  professionalId String?
+  professional   Professional?     @relation(fields: [professionalId], references: [id])
+  date           DateTime
+  status         String            @default("CONFIRMED") // CONFIRMED, CANCELLED, FINISHED
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
 }
 
 model Review {

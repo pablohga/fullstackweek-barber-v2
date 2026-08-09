@@ -45,13 +45,35 @@ interface BookingItemProps {
   }>
 }
 
-// TODO: receber agendamento como prop
 const BookingItem = ({ booking }: BookingItemProps) => {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const {
     service: { barbershop },
   } = booking
-  const isConfirmed = isFuture(booking.date)
+
+  const isConfirmed = isFuture(booking.date) && booking.status === "CONFIRMED"
+  const isFinished = booking.status === "FINISHED"
+  const isCancelled = booking.status === "CANCELLED"
+  const isExpired = !isFuture(booking.date) && booking.status === "CONFIRMED"
+
+  let badgeLabel = "Confirmado"
+  let badgeVariant: "default" | "secondary" | "destructive" | "outline" =
+    "default"
+
+  if (isFinished) {
+    badgeLabel = "Finalizado"
+    badgeVariant = "secondary"
+  } else if (isCancelled) {
+    badgeLabel = "Cancelado"
+    badgeVariant = "destructive"
+  } else if (isExpired) {
+    badgeLabel = "Expirado"
+    badgeVariant = "destructive"
+  } else if (isConfirmed) {
+    badgeLabel = "Confirmado"
+    badgeVariant = "default"
+  }
+
   const handleCancelBooking = async () => {
     try {
       await deleteBooking(booking.id)
@@ -62,9 +84,11 @@ const BookingItem = ({ booking }: BookingItemProps) => {
       toast.error("Erro ao cancelar reserva. Tente novamente.")
     }
   }
+
   const handleSheetOpenChange = (isOpen: boolean) => {
     setIsSheetOpen(isOpen)
   }
+
   return (
     <Sheet open={isSheetOpen} onOpenChange={handleSheetOpenChange}>
       <SheetTrigger className="w-full min-w-[90%]">
@@ -72,11 +96,8 @@ const BookingItem = ({ booking }: BookingItemProps) => {
           <CardContent className="flex justify-between p-0">
             {/* ESQUERDA */}
             <div className="flex flex-col gap-2 py-5 pl-5">
-              <Badge
-                className="w-fit"
-                variant={isConfirmed ? "default" : "secondary"}
-              >
-                {isConfirmed ? "Confirmado" : "Finalizado"}
+              <Badge className="w-fit" variant={badgeVariant}>
+                {badgeLabel}
               </Badge>
               <h3 className="font-semibold">{booking.service.name}</h3>
 
@@ -129,11 +150,8 @@ const BookingItem = ({ booking }: BookingItemProps) => {
         </div>
 
         <div className="mt-6">
-          <Badge
-            className="w-fit"
-            variant={isConfirmed ? "default" : "secondary"}
-          >
-            {isConfirmed ? "Confirmado" : "Finalizado"}
+          <Badge className="w-fit" variant={badgeVariant}>
+            {badgeLabel}
           </Badge>
 
           <div className="mb-3 mt-6">
