@@ -276,20 +276,25 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                   )}
 
                   {selectedDay && selectedProfessionalId && (
-                    <div className="flex gap-3 overflow-x-auto border-b border-solid p-5 [&::-webkit-scrollbar]:hidden">
+                    <div className="border-b border-solid p-5">
+                      <p className="mb-3 text-xs font-bold uppercase text-gray-400">
+                        Selecione o Horário
+                      </p>
                       {timeList.length > 0 ? (
-                        timeList.map((time) => (
-                          <Button
-                            key={time}
-                            variant={
-                              selectedTime === time ? "default" : "outline"
-                            }
-                            className="rounded-full"
-                            onClick={() => handleTimeSelect(time)}
-                          >
-                            {time}
-                          </Button>
-                        ))
+                        <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
+                          {timeList.map((time) => (
+                            <Button
+                              key={time}
+                              variant={
+                                selectedTime === time ? "default" : "outline"
+                              }
+                              className="rounded-full text-xs"
+                              onClick={() => handleTimeSelect(time)}
+                            >
+                              {time}
+                            </Button>
+                          ))}
+                        </div>
                       ) : (
                         <p className="text-xs text-muted-foreground">
                           Não há horários disponíveis para este profissional
