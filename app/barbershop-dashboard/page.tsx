@@ -6,6 +6,9 @@ import { redirect } from "next/navigation"
 import BarbershopForm from "./_components/barbershop-form"
 import ServiceForm from "./_components/service-form"
 import BookingsManagement from "./_components/bookings-management"
+import EditBarbershopModal from "./_components/edit-barbershop-modal"
+
+export const dynamic = "force-dynamic"
 
 const BarbershopDashboardPage = async () => {
   const session = await getServerSession(authOptions)
@@ -74,6 +77,9 @@ const BarbershopDashboardPage = async () => {
                       </p>
                     </div>
                   </div>
+                  <EditBarbershopModal
+                    barbershop={JSON.parse(JSON.stringify(barbershop))}
+                  />
                 </div>
 
                 {/* Cadastrar Serviço */}
@@ -114,9 +120,6 @@ const BarbershopDashboardPage = async () => {
 
                 {/* Gerenciamento de Agendamentos */}
                 <div className="space-y-3 border-t pt-4">
-                  <h4 className="text-sm font-semibold uppercase text-gray-400">
-                    Gerenciar Agendamentos
-                  </h4>
                   <BookingsManagement
                     barbershop={JSON.parse(JSON.stringify(barbershop))}
                   />

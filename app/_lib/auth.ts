@@ -54,6 +54,15 @@ export const authOptions: AuthOptions = {
         token.id = user.id
         token.role = (user as any).role
       }
+      if (token?.email) {
+        const dbUser = await db.user.findUnique({
+          where: { email: token.email },
+        })
+        if (dbUser) {
+          token.id = dbUser.id
+          token.role = dbUser.role
+        }
+      }
       if (trigger === "update" && session?.role) {
         token.role = session.role
       }
@@ -70,5 +79,7 @@ export const authOptions: AuthOptions = {
       return session
     },
   },
-  secret: process.env.NEXT_AUTH_SECRET,
+  secret:
+    process.env.NEXTAUTH_SECRET ||
+    "barberzone-super-secret-jwt-key-2026-secure",
 }

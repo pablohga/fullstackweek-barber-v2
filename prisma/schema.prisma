@@ -22,6 +22,7 @@ model User {
   bookings      Booking[]
   barbershops   Barbershop[]
   reviews       Review[]
+  galleryImages UserGalleryImage[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 }
@@ -113,4 +114,13 @@ model Review {
   barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+}
+
+model UserGalleryImage {
+  id        String   @id @default(uuid())
+  imageUrl  String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

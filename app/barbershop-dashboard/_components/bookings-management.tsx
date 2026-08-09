@@ -7,6 +7,17 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/app/_components/ui/dialog"
+import { Input } from "@/app/_components/ui/input"
+import { useState } from "react"
+import { CheckCircle2Icon, SearchIcon } from "lucide-react"
 
 interface BookingsManagementProps {
   barbershop: any
@@ -14,6 +25,9 @@ interface BookingsManagementProps {
 
 const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
   const router = useRouter()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [clientFilter, setClientFilter] = useState("")
+  const [dateFilter, setDateFilter] = useState("")
 
   const allBookings = barbershop.services.flatMap((service: any) =>
     service.bookings.map((booking: any) => ({
@@ -22,6 +36,21 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
       servicePrice: service.price,
     })),
   )
+
+  const concludedBookings = allBookings.filter(
+    (booking: any) => booking.status === "FINISHED",
+  )
+
+  const filteredConcludedBookings = concludedBookings.filter((booking: any) => {
+    const clientName = booking.user?.name || "Cliente"
+    const matchesName = clientName
+      .toLowerCase()
+      .includes(clientFilter.toLowerCase())
+    const matchesDate = dateFilter
+      ? format(new Date(booking.date), "yyyy-MM-dd") === dateFilter
+      : true
+    return matchesName && matchesDate
+  })
 
   const handleStatusUpdate = async (
     bookingId: string,
@@ -36,93 +65,198 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
     }
   }
 
-  if (allBookings.length === 0) {
-    return (
-      <p className="text-sm text-gray-400">
-        Nenhum agendamento para esta barbearia ainda.
-      </p>
-    )
-  }
-
   return (
-    <div className="space-y-3">
-      {allBookings.map((booking: any) => {
-        const isConfirmed = booking.status === "CONFIRMED" || !booking.status
-        const isFinished = booking.status === "FINISHED"
-        const isCancelled = booking.status === "CANCELLED"
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h4 className="text-sm font-semibold uppercase text-gray-400">
+          Gerenciar Agendamentos
+        </h4>
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-2">
+              <CheckCircle2Icon size={16} />
+              Agendamentos concluídos
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="flex max-h-[90vh] max-w-2xl flex-col">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold">
+                Agendamentos Concluídos ({concludedBookings.length})
+              </DialogTitle>
+            </DialogHeader>
 
-        return (
-          <div
-            key={booking.id}
-            className="flex flex-col items-start justify-between gap-4 rounded-lg border p-4 md:flex-row md:items-center"
-          >
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <p className="font-bold">{booking.serviceName}</p>
-                <Badge
-                  variant={
-                    isCancelled
-                      ? "destructive"
-                      : isFinished
-                        ? "secondary"
-                        : "default"
-                  }
-                >
-                  {isCancelled
-                    ? "Cancelado"
-                    : isFinished
-                      ? "Finalizado"
-                      : "Confirmado"}
-                </Badge>
+            {/* Filtros */}
+            <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
+              <div className="relative">
+                <SearchIcon
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                />
+                <Input
+                  placeholder="Filtrar por nome do cliente..."
+                  value={clientFilter}
+                  onChange={(e) => setClientFilter(e.target.value)}
+                  className="pl-9"
+                />
               </div>
-              <p className="text-sm text-gray-400">
-                Cliente:{" "}
-                <span className="font-semibold text-foreground">
-                  {booking.user?.name || "Cliente"}
-                </span>{" "}
-                ({booking.user?.email})
-              </p>
-              <p className="text-xs text-gray-400">
-                Data:{" "}
-                {format(new Date(booking.date), "dd 'de' MMMM 'às' HH:mm", {
-                  locale: ptBR,
-                })}
-              </p>
+              <div className="relative">
+                <Input
+                  type="date"
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                  className="w-full"
+                />
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              {isConfirmed && (
-                <>
+            {/* Listagem com barra de rolagem */}
+            <div className="max-h-[50vh] flex-1 space-y-3 overflow-y-auto pr-1 pt-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted [&::-webkit-scrollbar]:w-2">
+              {filteredConcludedBookings.length === 0 ? (
+                <p className="py-8 text-center text-sm text-gray-400">
+                  Nenhum agendamento concluído encontrado com os filtros
+                  aplicados.
+                </p>
+              ) : (
+                filteredConcludedBookings.map((booking: any) => (
+                  <div
+                    key={booking.id}
+                    className="flex flex-col justify-between gap-3 rounded-lg border p-4 sm:flex-row sm:items-center"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <p className="text-base font-bold">
+                          {booking.serviceName}
+                        </p>
+                        <Badge variant="secondary">Finalizado</Badge>
+                      </div>
+                      <p className="text-sm text-gray-300">
+                        Cliente:{" "}
+                        <span className="font-semibold text-foreground">
+                          {booking.user?.name || "Cliente"}
+                        </span>
+                        {booking.user?.email && ` (${booking.user.email})`}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        Data e Hora:{" "}
+                        {format(
+                          new Date(booking.date),
+                          "dd 'de' MMMM 'de' yyyy 'às' HH:mm",
+                          {
+                            locale: ptBR,
+                          },
+                        )}
+                      </p>
+                    </div>
+
+                    <div className="text-right sm:self-center">
+                      <p className="text-sm font-bold text-primary">
+                        {Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(Number(booking.servicePrice))}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="flex justify-end border-t pt-3">
+              <DialogClose asChild>
+                <Button variant="outline" size="sm">
+                  Fechar
+                </Button>
+              </DialogClose>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {allBookings.length === 0 ? (
+        <p className="text-sm text-gray-400">
+          Nenhum agendamento para esta barbearia ainda.
+        </p>
+      ) : (
+        allBookings.map((booking: any) => {
+          const isConfirmed = booking.status === "CONFIRMED" || !booking.status
+          const isFinished = booking.status === "FINISHED"
+          const isCancelled = booking.status === "CANCELLED"
+
+          return (
+            <div
+              key={booking.id}
+              className="flex flex-col items-start justify-between gap-4 rounded-lg border p-4 md:flex-row md:items-center"
+            >
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <p className="font-bold">{booking.serviceName}</p>
+                  <Badge
+                    variant={
+                      isCancelled
+                        ? "destructive"
+                        : isFinished
+                          ? "secondary"
+                          : "default"
+                    }
+                  >
+                    {isCancelled
+                      ? "Cancelado"
+                      : isFinished
+                        ? "Finalizado"
+                        : "Confirmado"}
+                  </Badge>
+                </div>
+                <p className="text-sm text-gray-400">
+                  Cliente:{" "}
+                  <span className="font-semibold text-foreground">
+                    {booking.user?.name || "Cliente"}
+                  </span>{" "}
+                  ({booking.user?.email})
+                </p>
+                <p className="text-xs text-gray-400">
+                  Data:{" "}
+                  {format(new Date(booking.date), "dd 'de' MMMM 'às' HH:mm", {
+                    locale: ptBR,
+                  })}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {isConfirmed && (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
+                      onClick={() => handleStatusUpdate(booking.id, "FINISHED")}
+                    >
+                      Concluir
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() =>
+                        handleStatusUpdate(booking.id, "CANCELLED")
+                      }
+                    >
+                      Cancelar
+                    </Button>
+                  </>
+                )}
+                {isCancelled && (
                   <Button
                     size="sm"
                     variant="outline"
-                    className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
-                    onClick={() => handleStatusUpdate(booking.id, "FINISHED")}
+                    onClick={() => handleStatusUpdate(booking.id, "CONFIRMED")}
                   >
-                    Concluir
+                    Reativar
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => handleStatusUpdate(booking.id, "CANCELLED")}
-                  >
-                    Cancelar
-                  </Button>
-                </>
-              )}
-              {isCancelled && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleStatusUpdate(booking.id, "CONFIRMED")}
-                >
-                  Reativar
-                </Button>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-        )
-      })}
+          )
+        })
+      )}
     </div>
   )
 }

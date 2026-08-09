@@ -6,25 +6,20 @@ import { redirect } from "next/navigation"
 import CreateBarbershopModal from "./_components/create-barbershop-modal"
 import UsersManagement from "./_components/users-management"
 
+export const dynamic = "force-dynamic"
+
 const AdminDashboardPage = async () => {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email) {
     redirect("/")
   }
 
-  const role = (session.user as any).role
+  const dbUser = await db.user.findUnique({
+    where: { email: session.user.email },
+  })
 
-  if (session.user.email !== "pablohga@gmail.com" && role !== "ADMIN") {
+  if (!dbUser || dbUser.role !== "ADMIN") {
     redirect("/")
-  }
-
-  if (session.user.email === "pablohga@gmail.com") {
-    await db.user
-      .updateMany({
-        where: { email: "pablohga@gmail.com" },
-        data: { role: "ADMIN" },
-      })
-      .catch(() => {})
   }
 
   const users = await db.user.findMany({
@@ -35,6 +30,7 @@ const AdminDashboardPage = async () => {
         },
       },
       reviews: true,
+      barbershops: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -61,6 +57,11 @@ const AdminDashboardPage = async () => {
       ...review,
       createdAt: review.createdAt.toISOString(),
       updatedAt: review.updatedAt.toISOString(),
+    })),
+    barbershops: user.barbershops.map((bs: any) => ({
+      ...bs,
+      createdAt: bs.createdAt.toISOString(),
+      updatedAt: bs.updatedAt.toISOString(),
     })),
   }))
 

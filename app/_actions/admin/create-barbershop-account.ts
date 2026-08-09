@@ -7,9 +7,19 @@ import bcrypt from "bcryptjs"
 import { revalidatePath } from "next/cache"
 
 interface CreateBarbershopAccountParams {
-  name: string
+  barbershopName: string
+  ownerName: string
+  address: string
+  complement?: string
+  state: string
+  city: string
+  phone: string
+  whatsapp: string
   email: string
   password: string
+  confirmPassword: string
+  billingPeriod?: string
+  billingAmount?: string
 }
 
 export const createBarbershopAccount = async (
@@ -22,8 +32,13 @@ export const createBarbershopAccount = async (
   const dbUser = await db.user.findUnique({
     where: { email: session.user.email },
   })
-  if (!dbUser || dbUser.role !== "ADMIN") {
+  const sessionRole = (session.user as any).role
+  if (!dbUser || (sessionRole !== "ADMIN" && dbUser.role !== "ADMIN")) {
     throw new Error("Unauthorized")
+  }
+
+  if (params.password !== params.confirmPassword) {
+    throw new Error("As senhas não coincidem.")
   }
 
   const existingUser = await db.user.findUnique({
@@ -36,15 +51,34 @@ export const createBarbershopAccount = async (
 
   const hashedPassword = await bcrypt.hash(params.password, 10)
 
+  const fullAddress = `${params.address}${params.complement ? ", " + params.complement : ""}, ${params.city} - ${params.state}`
+
   const user = await db.user.create({
     data: {
-      name: params.name,
+      name: params.ownerName,
       email: params.email,
       password: hashedPassword,
+      phone: params.phone,
+      whatsapp: params.whatsapp,
+      address: fullAddress,
       role: "BARBERSHOP",
     },
   })
 
+  await db.barbershop.create({
+    data: {
+      name: params.barbershopName,
+      address: fullAddress,
+      phones: [params.phone, params.whatsapp].filter(Boolean) as string[],
+      description: `Plano: ${params.billingPeriod || "Mensal"} - R$ ${params.billingAmount || "39,00"}`,
+      imageUrl:
+        "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=1000&auto=format&fit=crop",
+      userId: user.id,
+    },
+  })
+
   revalidatePath("/admin")
+  revalidatePath("/")
+  revalidatePath("/barbershops")
   return user
 }
