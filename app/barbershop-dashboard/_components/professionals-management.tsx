@@ -7,6 +7,8 @@ import { updateProfessional } from "@/app/_actions/update-professional"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import { WorkingHoursModal } from "./working-hours-modal"
+import { ScheduleBlocksModal } from "./schedule-blocks-modal"
 
 interface ProfessionalsManagementProps {
   professionals: any[]
@@ -52,36 +54,43 @@ const ProfessionalsManagement = ({
       {professionals.map((prof: any) => (
         <div
           key={prof.id}
-          className="flex items-center justify-between rounded-lg border p-3"
+          className="flex flex-col gap-3 rounded-lg border p-4"
         >
-          <div className="flex items-center gap-3">
-            <div className="relative h-12 w-12 overflow-hidden rounded-full">
-              <Image
-                src={
-                  prof.imageUrl ||
-                  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop"
-                }
-                alt={prof.name}
-                fill
-                className="object-cover"
-              />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="relative h-12 w-12 overflow-hidden rounded-full">
+                <Image
+                  src={
+                    prof.imageUrl ||
+                    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop"
+                  }
+                  alt={prof.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <p className="font-bold">{prof.name}</p>
+                <Badge variant={prof.active ? "default" : "secondary"}>
+                  {prof.active ? "Ativo" : "Inativo"}
+                </Badge>
+              </div>
             </div>
-            <div>
-              <p className="font-bold">{prof.name}</p>
-              <Badge variant={prof.active ? "default" : "secondary"}>
-                {prof.active ? "Ativo" : "Inativo"}
-              </Badge>
-            </div>
+
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={loadingId === prof.id}
+              onClick={() => handleToggleActive(prof.id, prof.active)}
+            >
+              {prof.active ? "Inativar" : "Ativar"}
+            </Button>
           </div>
 
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={loadingId === prof.id}
-            onClick={() => handleToggleActive(prof.id, prof.active)}
-          >
-            {prof.active ? "Inativar" : "Ativar"}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2 border-t pt-3">
+            <WorkingHoursModal professional={prof} />
+            <ScheduleBlocksModal professional={prof} />
+          </div>
         </div>
       ))}
     </div>

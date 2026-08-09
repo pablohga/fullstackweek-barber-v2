@@ -14,11 +14,13 @@ import {
 import { Calendar } from "./ui/calendar"
 import { ptBR } from "date-fns/locale"
 import { useEffect, useMemo, useState } from "react"
-import { isPast, isToday, set } from "date-fns"
 import { createBooking } from "../_actions/create-booking"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 import { getBookings } from "../_actions/get-bookings"
+import { getWorkingHours } from "../_actions/get-working-hours"
+import { getScheduleBlocks } from "../_actions/get-schedule-blocks"
+import { getAvailableTimes } from "../_helpers/get-available-times"
 import { Dialog, DialogContent } from "./ui/dialog"
 import SignInDialog from "./sign-in-dialog"
 import BookingSummary from "./booking-summary"
@@ -27,57 +29,6 @@ import { useRouter } from "next/navigation"
 interface ServiceItemProps {
   service: BarbershopService
   barbershop: Pick<Barbershop, "name"> & { professionals?: any[] }
-}
-
-const TIME_LIST = [
-  "08:00",
-  "08:30",
-  "09:00",
-  "09:30",
-  "10:00",
-  "10:30",
-  "11:00",
-  "11:30",
-  "12:00",
-  "12:30",
-  "13:00",
-  "13:30",
-  "14:00",
-  "14:30",
-  "15:00",
-  "15:30",
-  "16:00",
-  "16:30",
-  "17:00",
-  "17:30",
-  "18:00",
-]
-
-interface GetTimeListProps {
-  bookings: Booking[]
-  selectedDay: Date
-}
-
-const getTimeList = ({ bookings, selectedDay }: GetTimeListProps) => {
-  return TIME_LIST.filter((time) => {
-    const hour = Number(time.split(":")[0])
-    const minutes = Number(time.split(":")[1])
-
-    const timeIsOnThePast = isPast(set(new Date(), { hours: hour, minutes }))
-    if (timeIsOnThePast && isToday(selectedDay)) {
-      return false
-    }
-
-    const hasBookingOnCurrentTime = bookings.some(
-      (booking) =>
-        booking.date.getHours() === hour &&
-        booking.date.getMinutes() === minutes,
-    )
-    if (hasBookingOnCurrentTime) {
-      return false
-    }
-    return true
-  })
 }
 
 const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
@@ -91,11 +42,26 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
   const [selectedTime, setSelectedTime] = useState<string | undefined>(
     undefined,
   )
+  const [workingHours, setWorkingHours] = useState<any[]>([])
+  const [scheduleBlocks, setScheduleBlocks] = useState<any[]>([])
   const [dayBookings, setDayBookings] = useState<Booking[]>([])
   const [bookingSheetIsOpen, setBookingSheetIsOpen] = useState(false)
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchProfData = async () => {
+      if (!selectedProfessionalId) return
+      const [wh, blocks] = await Promise.all([
+        getWorkingHours(selectedProfessionalId),
+        getScheduleBlocks(selectedProfessionalId),
+      ])
+      setWorkingHours(wh || [])
+      setScheduleBlocks(blocks || [])
+    }
+    fetchProfData()
+  }, [selectedProfessionalId])
+
+  useEffect(() => {
+    const fetchBookings = async () => {
       if (!selectedDay || !selectedProfessionalId) return
       const bookings = await getBookings({
         date: selectedDay,
@@ -103,16 +69,20 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
       })
       setDayBookings(bookings)
     }
-    fetch()
+    fetchBookings()
   }, [selectedDay, selectedProfessionalId])
 
   const selectedDate = useMemo(() => {
     if (!selectedDay || !selectedTime) return
-    return set(selectedDay, {
-      hours: Number(selectedTime?.split(":")[0]),
-      minutes: Number(selectedTime?.split(":")[1]),
-    })
+    return setTimeOnDate(selectedDay, selectedTime)
   }, [selectedDay, selectedTime])
+
+  const setTimeOnDate = (date: Date, time: string) => {
+    const [hours, minutes] = time.split(":").map(Number)
+    const newDate = new Date(date)
+    newDate.setHours(hours, minutes, 0, 0)
+    return newDate
+  }
 
   const handleBookingClick = () => {
     if (data?.user) {
@@ -125,6 +95,8 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
     setSelectedProfessionalId(undefined)
     setSelectedDay(undefined)
     setSelectedTime(undefined)
+    setWorkingHours([])
+    setScheduleBlocks([])
     setDayBookings([])
     setBookingSheetIsOpen(false)
   }
@@ -168,11 +140,19 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
 
   const timeList = useMemo(() => {
     if (!selectedDay || !selectedProfessionalId) return []
-    return getTimeList({
-      bookings: dayBookings,
+    return getAvailableTimes({
       selectedDay,
+      workingHours,
+      scheduleBlocks,
+      bookings: dayBookings,
     })
-  }, [dayBookings, selectedDay, selectedProfessionalId])
+  }, [
+    workingHours,
+    scheduleBlocks,
+    dayBookings,
+    selectedDay,
+    selectedProfessionalId,
+  ])
 
   return (
     <>
@@ -311,9 +291,9 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                           </Button>
                         ))
                       ) : (
-                        <p className="text-xs">
+                        <p className="text-xs text-muted-foreground">
                           Não há horários disponíveis para este profissional
-                          neste dia.
+                          neste dia (fechado ou sem horários livres).
                         </p>
                       )}
                     </div>

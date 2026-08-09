@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache"
 import { db } from "../_lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "../_lib/auth"
+import { format, startOfDay, endOfDay } from "date-fns"
 
 interface CreateBookingParams {
   serviceId: string
@@ -21,10 +22,62 @@ export const createBooking = async (params: CreateBookingParams) => {
     throw new Error("Profissional não selecionado")
   }
 
+  const bookingDate = new Date(params.date)
+  const weekday = bookingDate.getDay()
+  const timeStr = format(bookingDate, "HH:mm")
+
+  // 1. Check working hours
+  const workingHours = await db.workingHours.findUnique({
+    where: {
+      professionalId_weekday: {
+        professionalId: params.professionalId,
+        weekday,
+      },
+    },
+  })
+
+  if (!workingHours || !workingHours.isOpen) {
+    throw new Error("Profissional não atiende neste dia.")
+  }
+
+  if (timeStr < workingHours.startTime || timeStr >= workingHours.endTime) {
+    throw new Error("Horário fora do expediente do profissional.")
+  }
+
+  if (
+    workingHours.breakStart &&
+    workingHours.breakEnd &&
+    timeStr >= workingHours.breakStart &&
+    timeStr < workingHours.breakEnd
+  ) {
+    throw new Error("Horário coincide com o intervalo do profissional.")
+  }
+
+  // 2. Check schedule blocks
+  const blocks = await db.scheduleBlock.findMany({
+    where: {
+      professionalId: params.professionalId,
+      date: {
+        gte: startOfDay(bookingDate),
+        lte: endOfDay(bookingDate),
+      },
+    },
+  })
+
+  for (const block of blocks) {
+    if (!block.startTime || !block.endTime) {
+      throw new Error("Profissional indisponível nesta data (bloqueio total).")
+    }
+    if (timeStr >= block.startTime && timeStr < block.endTime) {
+      throw new Error("Horário bloqueado na agenda do profissional.")
+    }
+  }
+
+  // 3. Check existing confirmed bookings
   const existingBooking = await db.booking.findFirst({
     where: {
       professionalId: params.professionalId,
-      date: params.date,
+      date: bookingDate,
       status: "CONFIRMED",
     },
   })
@@ -37,7 +90,7 @@ export const createBooking = async (params: CreateBookingParams) => {
     data: {
       serviceId: params.serviceId,
       professionalId: params.professionalId,
-      date: params.date,
+      date: bookingDate,
       userId: (user.user as any).id,
     },
   })
