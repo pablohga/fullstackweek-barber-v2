@@ -145,6 +145,11 @@ model Booking {
   professional   Professional?     @relation(fields: [professionalId], references: [id])
   date           DateTime
   status         String            @default("CONFIRMED") // CONFIRMED, CANCELLED, FINISHED
+  
+  confirmationSentAt DateTime?
+  reminderSentAt     DateTime?
+  cancellationSentAt DateTime?
+
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 }

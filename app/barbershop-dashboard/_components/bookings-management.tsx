@@ -17,7 +17,12 @@ import {
 } from "@/app/_components/ui/dialog"
 import { Input } from "@/app/_components/ui/input"
 import { useState } from "react"
-import { CheckCircle2Icon, SearchIcon } from "lucide-react"
+import {
+  CheckCircle2Icon,
+  SearchIcon,
+  MailIcon,
+  BellRingIcon,
+} from "lucide-react"
 
 interface BookingsManagementProps {
   barbershop: any
@@ -255,6 +260,32 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
                     locale: ptBR,
                   })}
                 </p>
+                <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] text-gray-400">
+                  {booking.confirmationSentAt && (
+                    <span
+                      className="flex items-center gap-1 text-green-500"
+                      title="Confirmação enviada por e-mail/WhatsApp"
+                    >
+                      <MailIcon size={12} /> Confirmação enviada
+                    </span>
+                  )}
+                  {booking.reminderSentAt && (
+                    <span
+                      className="flex items-center gap-1 text-yellow-500"
+                      title="Lembrete enviado"
+                    >
+                      <BellRingIcon size={12} /> Lembrete enviado
+                    </span>
+                  )}
+                  {booking.cancellationSentAt && (
+                    <span
+                      className="flex items-center gap-1 text-red-400"
+                      title="Aviso de cancelamento enviado"
+                    >
+                      <MailIcon size={12} /> Cancelamento notificado
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center gap-2">

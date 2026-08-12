@@ -77,7 +77,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
     return setTimeOnDate(selectedDay, selectedTime)
   }, [selectedDay, selectedTime])
 
-  const setTimeOnDate = (date: Date, time: string) => {
+  function setTimeOnDate(date: Date, time: string) {
     const [hours, minutes] = time.split(":").map(Number)
     const newDate = new Date(date)
     newDate.setHours(hours, minutes, 0, 0)

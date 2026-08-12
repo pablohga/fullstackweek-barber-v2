@@ -5,6 +5,7 @@ import { db } from "../_lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "../_lib/auth"
 import { format, startOfDay, endOfDay } from "date-fns"
+import { notifyBookingConfirmation } from "../_lib/notifications"
 
 interface CreateBookingParams {
   serviceId: string
@@ -86,14 +87,43 @@ export const createBooking = async (params: CreateBookingParams) => {
     throw new Error("Este horário já está ocupado para este profissional.")
   }
 
+  const userId = (user.user as any).id
+
+  const [dbUser, serviceWithBarbershop, professional] = await Promise.all([
+    db.user.findUnique({ where: { id: userId } }),
+    db.barbershopService.findUnique({
+      where: { id: params.serviceId },
+      include: { barbershop: true },
+    }),
+    params.professionalId
+      ? db.professional.findUnique({ where: { id: params.professionalId } })
+      : Promise.resolve(null),
+  ])
+
   await db.booking.create({
     data: {
       serviceId: params.serviceId,
       professionalId: params.professionalId,
       date: bookingDate,
-      userId: (user.user as any).id,
+      userId,
+      confirmationSentAt: new Date(),
     },
   })
+
+  if (dbUser && serviceWithBarbershop) {
+    notifyBookingConfirmation({
+      clientName: dbUser.name || "Cliente",
+      clientEmail: dbUser.email,
+      clientPhone: dbUser.phone,
+      clientWhatsapp: dbUser.whatsapp,
+      barbershopName: serviceWithBarbershop.barbershop.name,
+      serviceName: serviceWithBarbershop.name,
+      professionalName: professional?.name,
+      date: bookingDate,
+    }).catch((err) =>
+      console.error("[Booking Confirmation Notification Error]", err),
+    )
+  }
 
   revalidatePath("/barbershops/[id]")
   revalidatePath("/bookings")
