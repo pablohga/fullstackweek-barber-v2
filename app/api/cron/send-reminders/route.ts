@@ -3,6 +3,8 @@ import { db } from "@/app/_lib/prisma"
 import { notifyBookingReminder } from "@/app/_lib/notifications"
 import { addHours } from "date-fns"
 
+export const dynamic = "force-dynamic"
+
 export async function GET(request: Request) {
   try {
     // 1. Authenticate cron request
@@ -11,10 +13,15 @@ export async function GET(request: Request) {
 
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
       // Also allow checking URL query param or header for flexibility
-      const url = new URL(
-        request.url,
-        `http://${request.headers.get("host") || "localhost"}`,
-      )
+      let url: URL
+      try {
+        url = new URL(request.url)
+      } catch {
+        url = new URL(
+          request.url || "/",
+          `http://${request.headers.get("host") || "localhost"}`,
+        )
+      }
       const secretQuery = url.searchParams.get("secret")
       if (secretQuery !== cronSecret) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
