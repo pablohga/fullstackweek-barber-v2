@@ -18,6 +18,10 @@ import {
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
 } from "recharts"
 import {
   DollarSignIcon,
@@ -26,12 +30,23 @@ import {
   UsersIcon,
   ScissorsIcon,
   ClockIcon,
+  PieChartIcon,
 } from "lucide-react"
 import { format, startOfMonth, endOfMonth, subDays } from "date-fns"
 
 interface MetricsDashboardProps {
   barbershopId: string
 }
+
+const COLORS = [
+  "#22c55e",
+  "#3b82f6",
+  "#eab308",
+  "#ec4899",
+  "#8b5cf6",
+  "#06b6d4",
+  "#f97316",
+]
 
 export const MetricsDashboard = ({ barbershopId }: MetricsDashboardProps) => {
   const [isPending, startTransition] = useTransition()
@@ -42,6 +57,16 @@ export const MetricsDashboard = ({ barbershopId }: MetricsDashboardProps) => {
 
   const [startDate, setStartDate] = useState(defaultStart)
   const [endDate, setEndDate] = useState(defaultEnd)
+
+  const [monthlyGoal, setMonthlyGoal] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(`barbershop_goal_${barbershopId}`)
+      return saved ? Number(saved) : 5000
+    }
+    return 5000
+  })
+  const [isEditingGoal, setIsEditingGoal] = useState(false)
+  const [tempGoal, setTempGoal] = useState(String(monthlyGoal))
 
   const loadMetrics = useCallback(
     (start: string, end: string) => {
@@ -89,6 +114,16 @@ export const MetricsDashboard = ({ barbershopId }: MetricsDashboardProps) => {
     loadMetrics(start, end)
   }
 
+  const handleSaveGoal = (e: React.FormEvent) => {
+    e.preventDefault()
+    const val = Number(tempGoal)
+    if (!isNaN(val) && val >= 0) {
+      setMonthlyGoal(val)
+      localStorage.setItem(`barbershop_goal_${barbershopId}`, String(val))
+      setIsEditingGoal(false)
+    }
+  }
+
   if (!metrics) {
     return (
       <div className="py-8 text-center text-sm text-gray-400">
@@ -101,6 +136,13 @@ export const MetricsDashboard = ({ barbershopId }: MetricsDashboardProps) => {
     Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
       value,
     )
+
+  const currentRevenue = metrics.realizedRevenue
+  const remainingValue = Math.max(0, monthlyGoal - currentRevenue)
+  const progressPercent = Math.min(
+    100,
+    (currentRevenue / (monthlyGoal || 1)) * 100,
+  )
 
   return (
     <div className="space-y-6">
@@ -166,6 +208,82 @@ export const MetricsDashboard = ({ barbershopId }: MetricsDashboardProps) => {
           {isPending ? "Filtrando..." : "Filtrar Período"}
         </Button>
       </form>
+
+      {/* Meta Mensal */}
+      <Card className="border-primary/30 bg-card">
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <div className="flex items-center gap-2">
+            <TrendingUpIcon className="h-5 w-5 text-primary" />
+            <CardTitle className="text-base font-bold">
+              Meta de Faturamento Mensal
+            </CardTitle>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setTempGoal(String(monthlyGoal))
+              setIsEditingGoal(!isEditingGoal)
+            }}
+          >
+            {isEditingGoal ? "Cancelar" : "Definir Meta"}
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {isEditingGoal && (
+            <form
+              onSubmit={handleSaveGoal}
+              className="flex items-center gap-2 pt-2"
+            >
+              <Input
+                type="number"
+                value={tempGoal}
+                onChange={(e) => setTempGoal(e.target.value)}
+                placeholder="Valor da meta (R$)"
+                className="max-w-[200px]"
+                required
+              />
+              <Button type="submit" size="sm">
+                Salvar
+              </Button>
+            </form>
+          )}
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div>
+              <p className="text-xs text-gray-400">Meta Mensal</p>
+              <p className="text-xl font-bold">
+                {currencyFormatter(monthlyGoal)}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-400">Valor Atual (Realizado)</p>
+              <p className="text-xl font-bold text-green-500">
+                {currencyFormatter(currentRevenue)}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-400">Valor Restante</p>
+              <p className="text-xl font-bold text-primary">
+                {currencyFormatter(remainingValue)}
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-1 pt-2">
+            <div className="flex justify-between text-xs text-gray-400">
+              <span>Progresso da Meta</span>
+              <span>{progressPercent.toFixed(1)}%</span>
+            </div>
+            <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full bg-primary transition-all duration-500"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Cards de Resumo */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -241,7 +359,132 @@ export const MetricsDashboard = ({ barbershopId }: MetricsDashboardProps) => {
         </Card>
       </div>
 
-      {/* Gráficos */}
+      {/* Gráficos de Pizza (Faturamento por Serviço e por Profissional) */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Gráfico de Pizza 1: Faturamento por Serviço */}
+        <Card>
+          <CardHeader className="flex flex-row items-center gap-2">
+            <PieChartIcon className="h-5 w-5 text-primary" />
+            <CardTitle className="text-base font-bold">
+              Faturamento por Serviço (Realizado)
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="h-[320px] pt-4">
+            {metrics.servicesArray.filter((s: any) => s.revenue > 0).length ===
+            0 ? (
+              <p className="flex h-full items-center justify-center text-sm text-gray-400">
+                Nenhum faturamento por serviço no período.
+              </p>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={metrics.servicesArray.filter(
+                      (s: any) => s.revenue > 0,
+                    )}
+                    dataKey="revenue"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={95}
+                    label={({
+                      name,
+                      percent,
+                    }: {
+                      name?: string
+                      percent?: number
+                    }) => `${name} (${((percent || 0) * 100).toFixed(0)}%)`}
+                  >
+                    {metrics.servicesArray
+                      .filter((s: any) => s.revenue > 0)
+                      .map((_: any, index: number) => (
+                        <Cell
+                          key={`cell-service-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#18181b",
+                      borderColor: "#27272a",
+                      borderRadius: 8,
+                    }}
+                    formatter={(val: any) => [
+                      currencyFormatter(val),
+                      "Faturamento",
+                    ]}
+                  />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Gráfico de Pizza 2: Faturamento por Profissional */}
+        <Card>
+          <CardHeader className="flex flex-row items-center gap-2">
+            <PieChartIcon className="h-5 w-5 text-primary" />
+            <CardTitle className="text-base font-bold">
+              Faturamento por Profissional (Realizado)
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="h-[320px] pt-4">
+            {metrics.professionalsArray.filter((p: any) => p.revenue > 0)
+              .length === 0 ? (
+              <p className="flex h-full items-center justify-center text-sm text-gray-400">
+                Nenhum faturamento por profissional no período.
+              </p>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={metrics.professionalsArray.filter(
+                      (p: any) => p.revenue > 0,
+                    )}
+                    dataKey="revenue"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={95}
+                    label={({
+                      name,
+                      percent,
+                    }: {
+                      name?: string
+                      percent?: number
+                    }) => `${name} (${((percent || 0) * 100).toFixed(0)}%)`}
+                  >
+                    {metrics.professionalsArray
+                      .filter((p: any) => p.revenue > 0)
+                      .map((_: any, index: number) => (
+                        <Cell
+                          key={`cell-prof-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#18181b",
+                      borderColor: "#27272a",
+                      borderRadius: 8,
+                    }}
+                    formatter={(val: any) => [
+                      currencyFormatter(val),
+                      "Faturamento",
+                    ]}
+                  />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Gráficos de Barra (Horários e Serviços) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Horários mais procurados */}
         <Card>
@@ -282,12 +525,12 @@ export const MetricsDashboard = ({ barbershopId }: MetricsDashboardProps) => {
           </CardContent>
         </Card>
 
-        {/* Serviços mais vendidos */}
+        {/* Serviços mais vendidos (Qtd) */}
         <Card>
           <CardHeader className="flex flex-row items-center gap-2">
             <ScissorsIcon className="h-5 w-5 text-primary" />
             <CardTitle className="text-base font-bold">
-              Serviços Mais Vendidos
+              Quantidade por Serviço
             </CardTitle>
           </CardHeader>
           <CardContent className="h-[300px] pt-4">
@@ -319,10 +562,6 @@ export const MetricsDashboard = ({ barbershopId }: MetricsDashboardProps) => {
                       borderRadius: 8,
                     }}
                     labelStyle={{ color: "#fff", fontWeight: "bold" }}
-                    formatter={(val: any, name: any) => [
-                      name === "revenue" ? currencyFormatter(val) : val,
-                      name === "revenue" ? "Faturamento" : "Qtd",
-                    ]}
                   />
                   <Bar
                     dataKey="count"
@@ -337,12 +576,12 @@ export const MetricsDashboard = ({ barbershopId }: MetricsDashboardProps) => {
         </Card>
       </div>
 
-      {/* Desempenho por profissional */}
+      {/* Desempenho por profissional (Barra) */}
       <Card>
         <CardHeader className="flex flex-row items-center gap-2">
           <UsersIcon className="h-5 w-5 text-primary" />
           <CardTitle className="text-base font-bold">
-            Desempenho por Profissional
+            Desempenho por Profissional (Atendimentos & Faturamento)
           </CardTitle>
         </CardHeader>
         <CardContent className="h-[300px] pt-4">

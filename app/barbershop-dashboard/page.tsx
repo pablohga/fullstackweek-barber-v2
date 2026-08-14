@@ -10,6 +10,7 @@ import ProfessionalsManagement from "./_components/professionals-management"
 import BookingsManagement from "./_components/bookings-management"
 import EditBarbershopModal from "./_components/edit-barbershop-modal"
 import { MetricsDashboard } from "./_components/metrics-dashboard"
+import { DashboardNavigation } from "./_components/dashboard-navigation"
 
 export const dynamic = "force-dynamic"
 
@@ -47,8 +48,14 @@ const BarbershopDashboardPage = async () => {
           <h1 className="text-2xl font-bold">Painel da Barbearia</h1>
         </div>
 
+        {/* Menu de Navegação Flutuante */}
+        <DashboardNavigation />
+
         {/* Cadastrar Barbearia */}
-        <div className="space-y-4 rounded-xl border border-solid p-6">
+        <div
+          id="section-cadastrar-barbershop"
+          className="space-y-4 rounded-xl border border-solid p-6"
+        >
           <h2 className="text-lg font-bold">1. Cadastrar Nova Barbearia</h2>
           <BarbershopForm />
         </div>
@@ -96,7 +103,7 @@ const BarbershopDashboardPage = async () => {
                 </div>
 
                 {/* Lista de Profissionais */}
-                <div className="space-y-2">
+                <div id="section-profissionais" className="space-y-2">
                   <h4 className="text-sm font-semibold uppercase text-gray-400">
                     Profissionais Cadastrados
                   </h4>
@@ -116,7 +123,7 @@ const BarbershopDashboardPage = async () => {
                 </div>
 
                 {/* Lista de Serviços */}
-                <div className="space-y-2">
+                <div id="section-servicos" className="space-y-2">
                   <h4 className="text-sm font-semibold uppercase text-gray-400">
                     Serviços Cadastrados
                   </h4>
@@ -144,12 +151,15 @@ const BarbershopDashboardPage = async () => {
                 </div>
 
                 {/* Métricas do Negócio */}
-                <div className="space-y-3 border-t pt-4">
+                <div id="section-metricas" className="space-y-3 border-t pt-4">
                   <MetricsDashboard barbershopId={barbershop.id} />
                 </div>
 
                 {/* Gerenciamento de Agendamentos */}
-                <div className="space-y-3 border-t pt-4">
+                <div
+                  id="section-agendamentos"
+                  className="space-y-3 border-t pt-4"
+                >
                   <BookingsManagement
                     barbershop={JSON.parse(JSON.stringify(barbershop))}
                   />
