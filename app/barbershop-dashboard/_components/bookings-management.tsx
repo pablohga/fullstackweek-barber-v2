@@ -3,6 +3,7 @@
 import { Button } from "@/app/_components/ui/button"
 import { Badge } from "@/app/_components/ui/badge"
 import { updateBookingStatus } from "@/app/_actions/update-booking-status"
+import { resendBookingNotification } from "@/app/_actions/resend-booking-notification"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
@@ -31,6 +32,9 @@ interface BookingsManagementProps {
 const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
   const router = useRouter()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
+  const [selectedBookingForNotification, setSelectedBookingForNotification] =
+    useState<any | null>(null)
   const [clientFilter, setClientFilter] = useState("")
   const [dateFilter, setDateFilter] = useState("")
   const [professionalFilter, setProfessionalFilter] = useState("")
@@ -77,6 +81,21 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
       router.refresh()
     } catch (error) {
       toast.error("Erro ao atualizar agendamento.")
+    }
+  }
+
+  const handleResendNotification = async () => {
+    if (!selectedBookingForNotification) return
+    try {
+      await resendBookingNotification({
+        bookingId: selectedBookingForNotification.id,
+      })
+      toast.success("Notificação enviada por e-mail e WhatsApp com sucesso!")
+      setIsNotificationModalOpen(false)
+      setSelectedBookingForNotification(null)
+      router.refresh()
+    } catch (error) {
+      toast.error("Erro ao enviar notificação.")
     }
   }
 
@@ -288,7 +307,19 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5"
+                  onClick={() => {
+                    setSelectedBookingForNotification(booking)
+                    setIsNotificationModalOpen(true)
+                  }}
+                >
+                  <BellRingIcon size={14} />
+                  Enviar notificação
+                </Button>
                 {isConfirmed && (
                   <>
                     <Button
@@ -324,6 +355,33 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
           )
         })
       )}
+
+      <Dialog
+        open={isNotificationModalOpen}
+        onOpenChange={setIsNotificationModalOpen}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold">
+              Enviar Notificação
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-300">
+            Uma mensagem de notificação foi enviada ao cliente no momento que
+            ele realizou o agendamento. Deseja enviar novamente a notificação?
+          </p>
+          <div className="flex justify-end gap-2 pt-4">
+            <DialogClose asChild>
+              <Button variant="outline" size="sm">
+                Não
+              </Button>
+            </DialogClose>
+            <Button size="sm" onClick={handleResendNotification}>
+              Sim, enviar.
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
