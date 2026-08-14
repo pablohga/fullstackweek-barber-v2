@@ -14,6 +14,10 @@ import { DashboardNavigation } from "./_components/dashboard-navigation"
 
 export const dynamic = "force-dynamic"
 
+export const metadata = {
+  title: "Painel da Barbearia",
+}
+
 const BarbershopDashboardPage = async () => {
   const session = await getServerSession(authOptions)
   if (!session?.user || (session.user as any).role !== "BARBERSHOP") {

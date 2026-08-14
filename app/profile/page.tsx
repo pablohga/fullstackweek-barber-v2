@@ -25,6 +25,10 @@ import ClientGallery from "./_components/client-gallery"
 
 export const dynamic = "force-dynamic"
 
+export const metadata = {
+  title: "Meu Perfil",
+}
+
 const ProfilePage = async () => {
   const session = await getServerSession(authOptions)
 

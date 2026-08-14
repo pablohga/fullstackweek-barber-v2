@@ -11,6 +11,10 @@ interface BarbershopsPageProps {
   }
 }
 
+export const metadata = {
+  title: "Busca de Barbearias",
+}
+
 const BarbershopsPage = async ({ searchParams }: BarbershopsPageProps) => {
   const barbershops = await db.barbershop.findMany({
     where: {

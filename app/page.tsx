@@ -14,6 +14,10 @@ import { ptBR } from "date-fns/locale"
 import { getConfirmedBookings } from "./_data/get-confirmed-bookings"
 import { sortBarbershops } from "./_helpers/sort-barbershops"
 
+export const metadata = {
+  title: "Início",
+}
+
 const Home = async () => {
   const session = await getServerSession(authOptions)
   const rawBarbershops = await db.barbershop.findMany({})

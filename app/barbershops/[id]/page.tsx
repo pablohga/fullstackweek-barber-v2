@@ -25,6 +25,15 @@ interface BarbershopPageProps {
   }
 }
 
+export async function generateMetadata({ params }: BarbershopPageProps) {
+  const barbershop = await db.barbershop.findUnique({
+    where: { id: params.id },
+  })
+  return {
+    title: barbershop ? barbershop.name : "Detalhes da Barbearia",
+  }
+}
+
 const BarbershopPage = async ({ params }: BarbershopPageProps) => {
   const session = await getServerSession(authOptions)
 

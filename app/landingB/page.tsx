@@ -22,6 +22,10 @@ import {
 
 export const dynamic = "force-dynamic"
 
+export const metadata = {
+  title: "Início (Landing B)",
+}
+
 const LandingBPage = async () => {
   const session = await getServerSession(authOptions)
   const rawBarbershops = await db.barbershop.findMany({})

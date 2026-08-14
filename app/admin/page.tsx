@@ -8,6 +8,10 @@ import UsersManagement from "./_components/users-management"
 
 export const dynamic = "force-dynamic"
 
+export const metadata = {
+  title: "Painel do Administrador",
+}
+
 const AdminDashboardPage = async () => {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email) {
