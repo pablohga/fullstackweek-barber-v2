@@ -6,7 +6,7 @@ import { updateBookingStatus } from "@/app/_actions/update-booking-status"
 import { resendBookingNotification } from "@/app/_actions/resend-booking-notification"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { format } from "date-fns"
+import { format, isFuture } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import {
   Dialog,
@@ -235,9 +235,15 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
         </p>
       ) : (
         filteredAllBookings.map((booking: any) => {
-          const isConfirmed = booking.status === "CONFIRMED" || !booking.status
+          const bookingDate = new Date(booking.date)
+          const isConfirmed =
+            (booking.status === "CONFIRMED" || !booking.status) &&
+            isFuture(bookingDate)
           const isFinished = booking.status === "FINISHED"
           const isCancelled = booking.status === "CANCELLED"
+          const isExpired =
+            (booking.status === "CONFIRMED" || !booking.status) &&
+            !isFuture(bookingDate)
 
           return (
             <div
@@ -249,7 +255,7 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
                   <p className="font-bold">{booking.serviceName}</p>
                   <Badge
                     variant={
-                      isCancelled
+                      isCancelled || isExpired
                         ? "destructive"
                         : isFinished
                           ? "secondary"
@@ -258,9 +264,11 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
                   >
                     {isCancelled
                       ? "Cancelado"
-                      : isFinished
-                        ? "Finalizado"
-                        : "Confirmado"}
+                      : isExpired
+                        ? "Expirado"
+                        : isFinished
+                          ? "Finalizado"
+                          : "Confirmado"}
                   </Badge>
                 </div>
                 <p className="text-xs font-semibold text-primary">
@@ -275,7 +283,7 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
                 </p>
                 <p className="text-xs text-gray-400">
                   Data:{" "}
-                  {format(new Date(booking.date), "dd 'de' MMMM 'às' HH:mm", {
+                  {format(bookingDate, "dd 'de' MMMM 'às' HH:mm", {
                     locale: ptBR,
                   })}
                 </p>
@@ -320,7 +328,7 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
                   <BellRingIcon size={14} />
                   Enviar notificação
                 </Button>
-                {isConfirmed && (
+                {(isConfirmed || isExpired) && (
                   <>
                     <Button
                       size="sm"
