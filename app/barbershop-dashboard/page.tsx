@@ -9,6 +9,7 @@ import ProfessionalForm from "./_components/professional-form"
 import ProfessionalsManagement from "./_components/professionals-management"
 import BookingsManagement from "./_components/bookings-management"
 import EditBarbershopModal from "./_components/edit-barbershop-modal"
+import { MetricsDashboard } from "./_components/metrics-dashboard"
 
 export const dynamic = "force-dynamic"
 
@@ -140,6 +141,11 @@ const BarbershopDashboardPage = async () => {
                       </div>
                     ))}
                   </div>
+                </div>
+
+                {/* Métricas do Negócio */}
+                <div className="space-y-3 border-t pt-4">
+                  <MetricsDashboard barbershopId={barbershop.id} />
                 </div>
 
                 {/* Gerenciamento de Agendamentos */}
