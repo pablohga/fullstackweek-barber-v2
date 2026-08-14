@@ -2,9 +2,16 @@ import PhoneItem from "@/app/_components/phone-item"
 import ServiceItem from "@/app/_components/service-item"
 import SidebarSheet from "@/app/_components/sidebar-sheet"
 import { Button } from "@/app/_components/ui/button"
+import { Badge } from "@/app/_components/ui/badge"
 import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet"
 import { db } from "@/app/_lib/prisma"
-import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react"
+import {
+  ChevronLeftIcon,
+  MapPinIcon,
+  MenuIcon,
+  StarIcon,
+  ShieldCheckIcon,
+} from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -94,7 +101,23 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
 
       {/* TÍTULO */}
       <div className="border-b border-solid p-5">
-        <h1 className="mb-3 text-xl font-bold">{barbershop.name}</h1>
+        <div className="mb-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold">{barbershop.name}</h1>
+            {barbershop.isVerified && (
+              <span
+                title="Barbearia Verificada"
+                className="inline-flex items-center"
+              >
+                <ShieldCheckIcon size={20} className="shrink-0 text-primary" />
+              </span>
+            )}
+          </div>
+          {barbershop.featuredUntil &&
+            new Date(barbershop.featuredUntil) > new Date() && (
+              <Badge variant="default">Destaque</Badge>
+            )}
+        </div>
         <div className="mb-2 flex items-center gap-2">
           <MapPinIcon className="text-primary" size={18} />
           <p className="text-sm">{barbershop?.address}</p>

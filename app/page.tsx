@@ -12,15 +12,13 @@ import { authOptions } from "./_lib/auth"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { getConfirmedBookings } from "./_data/get-confirmed-bookings"
+import { sortBarbershops } from "./_helpers/sort-barbershops"
 
 const Home = async () => {
   const session = await getServerSession(authOptions)
-  const barbershops = await db.barbershop.findMany({})
-  const popularBarbershops = await db.barbershop.findMany({
-    orderBy: {
-      name: "desc",
-    },
-  })
+  const rawBarbershops = await db.barbershop.findMany({})
+  const barbershops = sortBarbershops(rawBarbershops)
+  const popularBarbershops = sortBarbershops(rawBarbershops)
   const confirmedBookings = await getConfirmedBookings()
 
   return (

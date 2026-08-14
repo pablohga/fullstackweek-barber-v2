@@ -18,6 +18,8 @@ interface UpdateBarbershopAccountParams {
   email: string
   billingPeriod?: string
   billingAmount?: string
+  isVerified?: boolean
+  featuredUntil?: string | null
 }
 
 export const updateBarbershopAccount = async (
@@ -60,6 +62,10 @@ export const updateBarbershopAccount = async (
         address: fullAddress,
         phones: [params.phone, params.whatsapp].filter(Boolean) as string[],
         description: `Plano: ${params.billingPeriod || "Mensal"} - R$ ${params.billingAmount || "39,00"}`,
+        isVerified: params.isVerified ?? false,
+        featuredUntil: params.featuredUntil
+          ? new Date(params.featuredUntil)
+          : null,
       },
     })
   } else {
@@ -72,6 +78,10 @@ export const updateBarbershopAccount = async (
         imageUrl:
           "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=1000&auto=format&fit=crop",
         userId: params.userId,
+        isVerified: params.isVerified ?? false,
+        featuredUntil: params.featuredUntil
+          ? new Date(params.featuredUntil)
+          : null,
       },
     })
   }

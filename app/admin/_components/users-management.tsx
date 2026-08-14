@@ -38,6 +38,8 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
   const [email, setEmail] = useState("")
   const [billingPeriod, setBillingPeriod] = useState("Mensal")
   const [billingAmount, setBillingAmount] = useState("39,00")
+  const [isVerified, setIsVerified] = useState(false)
+  const [featuredUntil, setFeaturedUntil] = useState("")
 
   // Generic edit user state
   const [editName, setEditName] = useState("")
@@ -68,6 +70,12 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
     setPhone(user.phone || "")
     setWhatsapp(user.whatsapp || "")
     setEmail(user.email || "")
+    setIsVerified(bs?.isVerified || false)
+    setFeaturedUntil(
+      bs?.featuredUntil
+        ? new Date(bs.featuredUntil).toISOString().split("T")[0]
+        : "",
+    )
 
     // Try parsing address: "Rua X, Complemento, Cidade - Estado" or similar
     const fullAddr = user.address || bs?.address || ""
@@ -94,6 +102,12 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
     setBillingAmount(amount)
   }
 
+  const handleSetFeaturedDays = (days: number) => {
+    const d = new Date()
+    d.setDate(d.getDate() + days)
+    setFeaturedUntil(d.toISOString().split("T")[0])
+  }
+
   const handleUpdateBarbershopSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!editBarbershopUser) return
@@ -113,6 +127,10 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
         email,
         billingPeriod,
         billingAmount,
+        isVerified,
+        featuredUntil: featuredUntil
+          ? new Date(featuredUntil).toISOString()
+          : null,
       })
       toast.success("Barbearia atualizada com sucesso!")
       setEditBarbershopUser(null)
@@ -448,6 +466,68 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
+            </div>
+
+            {/* Destaque e Verificação */}
+            <div className="space-y-3 rounded-lg border bg-muted/20 p-4">
+              <h4 className="text-xs font-bold uppercase text-gray-400">
+                Visibilidade no Marketplace
+              </h4>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isVerified"
+                  checked={isVerified}
+                  onChange={(e) => setIsVerified(e.target.checked)}
+                  className="h-4 w-4 rounded border-input"
+                />
+                <label
+                  htmlFor="isVerified"
+                  className="cursor-pointer text-sm font-medium"
+                >
+                  Selo de Barbearia Verificada (isVerified)
+                </label>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-gray-400">
+                  Em Destaque Até (Featured Until)
+                </label>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <Input
+                    type="date"
+                    value={featuredUntil}
+                    onChange={(e) => setFeaturedUntil(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="flex flex-wrap gap-1">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleSetFeaturedDays(30)}
+                    >
+                      +30 dias
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleSetFeaturedDays(60)}
+                    >
+                      +60 dias
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setFeaturedUntil("")}
+                    >
+                      Limpar
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div>
