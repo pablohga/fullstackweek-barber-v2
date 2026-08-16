@@ -12,6 +12,8 @@ import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { getConfirmedBookings } from "../_data/get-confirmed-bookings"
 import { sortBarbershops } from "../_helpers/sort-barbershops"
+import { getBanners } from "../_actions/admin/manage-banners"
+import { BannerCarousel } from "./_components/banner-carousel"
 import {
   ShieldCheckIcon,
   ZapIcon,
@@ -31,6 +33,7 @@ const LandingBPage = async () => {
   const rawBarbershops = await db.barbershop.findMany({})
   const barbershops = sortBarbershops(rawBarbershops)
   const confirmedBookings = await getConfirmedBookings()
+  const banners = await getBanners()
 
   const verifiedBarbershops = barbershops.filter((b) => b.isVerified)
   const featuredBarbershops = barbershops.filter(
@@ -43,6 +46,10 @@ const LandingBPage = async () => {
       <Header />
 
       <main className="mx-auto max-w-7xl space-y-10 px-4 py-6 sm:px-6 lg:px-8">
+        {/* Carrossel de Banners */}
+        <section>
+          <BannerCarousel banners={banners} />
+        </section>
         {/* Hero Section (Marketplace Style: Amazon + Mercado Livre) */}
         <section className="relative overflow-hidden rounded-3xl border bg-card p-6 shadow-xl sm:p-10">
           <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />

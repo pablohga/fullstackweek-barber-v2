@@ -5,6 +5,8 @@ import { db } from "../_lib/prisma"
 import { redirect } from "next/navigation"
 import CreateBarbershopModal from "./_components/create-barbershop-modal"
 import UsersManagement from "./_components/users-management"
+import { getBanners } from "@/app/_actions/admin/manage-banners"
+import { BannersManagement } from "./_components/banners-management"
 
 export const dynamic = "force-dynamic"
 
@@ -26,20 +28,23 @@ const AdminDashboardPage = async () => {
     redirect("/")
   }
 
-  const users = await db.user.findMany({
-    include: {
-      bookings: {
-        include: {
-          service: true,
+  const [users, banners] = await Promise.all([
+    db.user.findMany({
+      include: {
+        bookings: {
+          include: {
+            service: true,
+          },
         },
+        reviews: true,
+        barbershops: true,
       },
-      reviews: true,
-      barbershops: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  })
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+    getBanners(),
+  ])
 
   const serializedUsers = users.map((user) => ({
     ...user,
@@ -77,6 +82,9 @@ const AdminDashboardPage = async () => {
 
         {/* Cadastrar Conta de Barbearia */}
         <CreateBarbershopModal />
+
+        {/* Gerenciamento de Banners da Home */}
+        <BannersManagement banners={banners} />
 
         {/* Gerenciamento de Usuários (Clientes e Barbearias) */}
         <UsersManagement users={serializedUsers} />
