@@ -132,11 +132,11 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
           ? new Date(featuredUntil).toISOString()
           : null,
       })
-      toast.success("Barbearia atualizada com sucesso!")
+      toast.success("Estabelecimento atualizado com sucesso!")
       setEditBarbershopUser(null)
       router.refresh()
     } catch (error: any) {
-      toast.error(error.message || "Erro ao atualizar barbearia.")
+      toast.error(error.message || "Erro ao atualizar estabelecimento.")
     } finally {
       setLoading(false)
     }
@@ -204,7 +204,7 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-bold">
-        Gerenciamento de Contas (Clientes e Barbearias)
+        Gerenciamento de Contas (Clientes e Estabelecimentos)
       </h3>
 
       <div className="overflow-x-auto rounded-xl border">
@@ -234,7 +234,7 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
                     ? `${user.barbershops[0].name} (${user.name || "Responsável"})`
                     : user.name || "Sem Nome"}{" "}
                   {user.role === "CLIENT" && "(Ver Detalhes)"}
-                  {user.role === "BARBERSHOP" && "(Editar Barbearia)"}
+                  {user.role === "BARBERSHOP" && "(Editar Estabelecimento)"}
                 </td>
                 <td className="p-3">{user.email}</td>
                 <td className="p-3">
@@ -356,20 +356,20 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Editar Barbearia (Pre-preenchido) */}
+      {/* Modal de Editar Estabelecimento (Pre-preenchido) */}
       <Dialog
         open={!!editBarbershopUser}
         onOpenChange={() => setEditBarbershopUser(null)}
       >
         <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Editar Conta de Barbearia</DialogTitle>
+            <DialogTitle>Editar Conta de Estabelecimento</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleUpdateBarbershopSubmit} className="space-y-4">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div>
                 <label className="text-xs font-semibold text-gray-400">
-                  Nome da Barbearia
+                  Nome do Estabelecimento
                 </label>
                 <Input
                   value={barbershopName}
@@ -485,7 +485,7 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
                   htmlFor="isVerified"
                   className="cursor-pointer text-sm font-medium"
                 >
-                  Selo de Barbearia Verificada (isVerified)
+                  Selo de Estabelecimento Verificado (isVerified)
                 </label>
               </div>
 

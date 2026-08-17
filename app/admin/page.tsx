@@ -82,13 +82,13 @@ const AdminDashboardPage = async () => {
       <div className="mx-auto max-w-6xl space-y-8 p-5">
         <h1 className="text-2xl font-bold">Dashboard do Administrador</h1>
 
-        {/* Cadastrar Conta de Barbearia */}
+        {/* Cadastrar Conta de Estabelecimento */}
         <CreateBarbershopModal barbershopUsers={barbershopUsers} />
 
         {/* Gerenciamento de Banners da Home */}
         <BannersManagement banners={banners} />
 
-        {/* Gerenciamento de Usuários (Clientes e Barbearias) */}
+        {/* Gerenciamento de Usuários (Clientes e Estabelecimentos) */}
         <UsersManagement users={serializedUsers} />
       </div>
     </div>

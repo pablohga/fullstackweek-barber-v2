@@ -14,7 +14,7 @@ import { DashboardNavigation } from "./_components/dashboard-navigation"
 export const dynamic = "force-dynamic"
 
 export const metadata = {
-  title: "Painel da Barbearia",
+  title: "Painel do Estabelecimento",
 }
 
 const BarbershopDashboardPage = async () => {
@@ -48,17 +48,17 @@ const BarbershopDashboardPage = async () => {
       <Header />
       <div className="mx-auto max-w-5xl space-y-8 p-5">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Painel da Barbearia</h1>
+          <h1 className="text-2xl font-bold">Painel do Estabelecimento</h1>
         </div>
 
         {/* Menu de Navegação Flutuante */}
         <DashboardNavigation />
 
-        {/* Gerenciar Barbearias, Serviços e Agendamentos */}
+        {/* Gerenciar Estabelecimentos, Serviços e Agendamentos */}
         <div className="space-y-6">
           {barbershops.length === 0 ? (
             <p className="text-gray-400">
-              Você ainda não possui nenhuma barbearia ativa.
+              Você ainda não possui nenhum estabelecimento ativo.
             </p>
           ) : (
             barbershops.map((barbershop) => (

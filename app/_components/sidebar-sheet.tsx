@@ -100,7 +100,7 @@ const SidebarSheet = () => {
           >
             <Link href="/barbershop-dashboard">
               <LogInIcon size={18} />
-              Painel da Barbearia
+              Painel do Estabelecimento
             </Link>
           </Button>
         )}
@@ -113,7 +113,7 @@ const SidebarSheet = () => {
             >
               <Link href="/admin">
                 <LogInIcon size={18} />
-                Gerenciar VizuGo
+                Gerenciar VizUAU
               </Link>
             </Button>
           </SheetClose>

@@ -19,7 +19,7 @@ const Header = () => {
     <Card className="rounded-none border-x-0 border-t-0">
       <CardContent className="mx-auto flex w-full max-w-7xl flex-row items-center justify-between p-5">
         <Link href="/">
-          <Image alt="VizuGo" src="/logo.png" height={18} width={120} />
+          <Image alt="VizUAU" src="/logo.png" height={18} width={120} />
         </Link>
 
         {/* Desktop Navbar (hidden on mobile, flex on md+) */}
@@ -51,7 +51,9 @@ const Header = () => {
 
               {(session.user as any).role === "BARBERSHOP" && (
                 <Button variant="outline" size="sm" asChild>
-                  <Link href="/barbershop-dashboard">Painel da Barbearia</Link>
+                  <Link href="/barbershop-dashboard">
+                    Painel do Estabelecimento
+                  </Link>
                 </Button>
               )}
 

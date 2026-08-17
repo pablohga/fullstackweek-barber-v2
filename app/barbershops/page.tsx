@@ -12,7 +12,7 @@ interface BarbershopsPageProps {
 }
 
 export const metadata = {
-  title: "Busca de Barbearias",
+  title: "Busca de Estabelecimentos",
 }
 
 const BarbershopsPage = async ({ searchParams }: BarbershopsPageProps) => {

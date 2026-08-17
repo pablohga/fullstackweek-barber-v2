@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: BarbershopPageProps) {
     where: { id: params.id },
   })
   return {
-    title: barbershop ? barbershop.name : "Detalhes da Barbearia",
+    title: barbershop ? barbershop.name : "Detalhes do Estabelecimento",
   }
 }
 
@@ -115,7 +115,7 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
             <h1 className="text-xl font-bold">{barbershop.name}</h1>
             {barbershop.isVerified && (
               <span
-                title="Barbearia Verificada"
+                title="Estabelecimento Verificado"
                 className="inline-flex items-center"
               >
                 <ShieldCheckIcon size={20} className="shrink-0 text-primary" />

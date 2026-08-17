@@ -25,7 +25,7 @@ export const updateBarbershop = async (params: UpdateBarbershopParams) => {
   })
 
   if (!barbershop || barbershop.userId !== (session.user as any).id) {
-    throw new Error("Barbearia não encontrada ou acesso negado")
+    throw new Error("Estabelecimento não encontrado ou acesso negado")
   }
 
   const updatedBarbershop = await db.barbershop.update({

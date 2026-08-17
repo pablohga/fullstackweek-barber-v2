@@ -231,7 +231,7 @@ const BookingsManagement = ({ barbershop }: BookingsManagementProps) => {
 
       {filteredAllBookings.length === 0 ? (
         <p className="text-sm text-gray-400">
-          Nenhum agendamento para esta barbearia ainda.
+          Nenhum agendamento para este estabelecimento ainda.
         </p>
       ) : (
         filteredAllBookings.map((booking: any) => {

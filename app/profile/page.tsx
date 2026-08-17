@@ -47,7 +47,7 @@ const ProfilePage = async () => {
               </h1>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 Você precisa estar conectado para visualizar e gerenciar seu
-                perfil na VizuGo.
+                perfil na VizUAU.
               </p>
             </div>
             <div className="pt-2">
@@ -138,7 +138,7 @@ const ProfilePage = async () => {
           <p className="text-sm text-muted-foreground">
             {isClient
               ? "Gerencie seus dados cadastrais, galeria de cortes favoritos, acompanhe seus agendamentos e veja suas avaliações."
-              : "Gerencie suas informações e acesso à barbearia."}
+              : "Gerencie suas informações e acesso ao estabelecimento."}
           </p>
         </div>
 
@@ -193,7 +193,7 @@ const ProfilePage = async () => {
                 <Button asChild className="w-full gap-2 font-semibold">
                   <Link href="/barbershop-dashboard">
                     <StoreIcon size={18} />
-                    Acessar Painel da Barbearia
+                    Acessar Painel do Estabelecimento
                   </Link>
                 </Button>
               )}
@@ -276,7 +276,8 @@ const ProfilePage = async () => {
               {user.reviews.length === 0 ? (
                 <Card className="border-dashed bg-card/20 p-6 text-center">
                   <p className="text-sm text-muted-foreground">
-                    Você ainda não realizou nenhuma avaliação de barbearia.
+                    Você ainda não realizou nenhuma avaliação de
+                    estabelecimento.
                   </p>
                 </Card>
               ) : (
@@ -286,7 +287,7 @@ const ProfilePage = async () => {
                       <CardContent className="space-y-2 p-4">
                         <div className="flex items-center justify-between">
                           <h4 className="text-sm font-bold">
-                            {review.barbershop?.name || "Barbearia"}
+                            {review.barbershop?.name || "Estabelecimento"}
                           </h4>
                           <div className="flex items-center gap-1 text-amber-400">
                             <StarIcon size={14} className="fill-current" />

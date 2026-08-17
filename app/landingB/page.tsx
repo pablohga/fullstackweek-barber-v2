@@ -64,7 +64,7 @@ const LandingBPage = async () => {
               <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-gray-400">
                 <div className="flex items-center gap-1.5">
                   <ShieldCheckIcon size={16} className="text-green-500" />
-                  <span>Barbearias Verificadas</span>
+                  <span>Estabelecimentos Verificados</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <ZapIcon size={16} className="text-yellow-500" />
@@ -140,8 +140,8 @@ const LandingBPage = async () => {
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="flex items-center gap-2 text-lg font-bold">
-                <SparklesIcon size={18} className="text-primary" /> Barbearias
-                em Destaque
+                <SparklesIcon size={18} className="text-primary" />{" "}
+                Estabelecimentos em Destaque
               </h2>
               <span className="text-xs text-gray-400">
                 Patrocinados e Exclusivos
@@ -155,7 +155,7 @@ const LandingBPage = async () => {
           </section>
         )}
 
-        {/* Barbearias Verificadas (Amazon / Mercado Livre Verified Badge style) */}
+        {/* Estabelecimentos Verificados (Amazon / Mercado Livre Verified Badge style) */}
         {verifiedBarbershops.length > 0 && (
           <section className="space-y-4">
             <div className="flex items-center justify-between">

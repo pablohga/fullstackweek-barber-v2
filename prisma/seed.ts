@@ -48,23 +48,23 @@ async function seedDatabase() {
       "https://utfs.io/f/07842cfb-7b30-4fdc-accc-719618dfa1f2-17s.png",
       "https://utfs.io/f/0522fdaf-0357-4213-8f52-1d83c3dcb6cd-18e.png",
     ]
-    // Nomes criativos para as barbearias
+    // Nomes criativos para os estabelecimentos
     const creativeNames = [
-      "Barbearia Vintage",
+      "Estabelecimento Vintage",
       "Corte & Estilo",
       "Barba & Navalha",
       "The Dapper Den",
       "Cabelo & Cia.",
       "Machado & Tesoura",
-      "Barbearia Elegance",
+      "Estabelecimento Elegance",
       "Aparência Impecável",
       "Estilo Urbano",
       "Estilo Clássico",
     ]
 
-    // Endereços fictícios para as barbearias
+    // Endereços fictícios para os estabelecimentos
     const addresses = [
-      "Rua da Barbearia, 123",
+      "Rua do Estabelecimento, 123",
       "Avenida dos Cortes, 456",
       "Praça da Barba, 789",
       "Travessa da Navalha, 101",
@@ -121,7 +121,7 @@ async function seedDatabase() {
       },
     ]
 
-    // Criar 10 barbearias com nomes e endereços fictícios
+    // Criar 10 estabelecimentos com nomes e endereços fictícios
     const barbershops = []
     for (let i = 0; i < 10; i++) {
       const name = creativeNames[i]
@@ -162,7 +162,7 @@ async function seedDatabase() {
     await prisma.$disconnect()
     await pool.end()
   } catch (error) {
-    console.error("Erro ao criar as barbearias:", error)
+    console.error("Erro ao criar os estabelecimentos:", error)
   }
 }
 

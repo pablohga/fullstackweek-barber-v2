@@ -37,7 +37,7 @@ const Bookings = async () => {
               </h1>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 Você precisa estar conectado para visualizar e gerenciar seus
-                agendamentos na VizuGo.
+                agendamentos na VizUAU.
               </p>
             </div>
             <div className="pt-2">
@@ -86,13 +86,13 @@ const Bookings = async () => {
             </div>
             <h3 className="text-lg font-bold">Nenhum agendamento encontrado</h3>
             <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-              Você ainda não agendou nenhum serviço. Que tal explorar nossas
-              barbearias parceiras agora mesmo?
+              Você ainda não agendou nenhum serviço. Que tal explorar nossos
+              estabelecimentos parceiros agora mesmo?
             </p>
             <div className="mt-6">
               <Button asChild className="gap-2 font-semibold">
                 <Link href="/">
-                  Explorar Barbearias
+                  Explorar Estabelecimentos
                   <ArrowRightIcon size={16} />
                 </Link>
               </Button>

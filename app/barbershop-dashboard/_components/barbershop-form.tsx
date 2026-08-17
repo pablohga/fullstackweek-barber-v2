@@ -29,10 +29,10 @@ const BarbershopForm = () => {
         name,
         address,
         phones: [phone || "(11) 99999-9999"],
-        description: description || "Barbearia de alta qualidade.",
+        description: description || "Estabelecimento de alta qualidade.",
         imageUrl,
       })
-      toast.success("Barbearia cadastrada com sucesso!")
+      toast.success("Estabelecimento cadastrado com sucesso!")
       setName("")
       setAddress("")
       setPhone("")
@@ -40,7 +40,7 @@ const BarbershopForm = () => {
       setImageUrl("")
       router.refresh()
     } catch (error) {
-      toast.error("Erro ao cadastrar barbearia.")
+      toast.error("Erro ao cadastrar estabelecimento.")
     } finally {
       setLoading(false)
     }
@@ -51,12 +51,12 @@ const BarbershopForm = () => {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
           <label className="text-xs font-semibold text-gray-400">
-            Nome da Barbearia
+            Nome do Estabelecimento
           </label>
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Ex: Barbearia Estilo"
+            placeholder="Ex: Estabelecimento Estilo"
             required
           />
         </div>
@@ -98,11 +98,11 @@ const BarbershopForm = () => {
         <Input
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Descrição sobre a barbearia..."
+          placeholder="Descrição sobre o estabelecimento..."
         />
       </div>
       <Button type="submit" disabled={loading}>
-        {loading ? "Cadastrando..." : "Cadastrar Barbearia"}
+        {loading ? "Cadastrando..." : "Cadastrar Estabelecimento"}
       </Button>
     </form>
   )

@@ -49,7 +49,7 @@ export default function RoleSwitcher({ currentRole }: RoleSwitcherProps) {
           onClick={() => handleRoleChange("BARBERSHOP")}
         >
           <StoreIcon size={16} />
-          Barbearia (Dono)
+          Estabelecimento (Dono)
         </Button>
       </div>
     </div>

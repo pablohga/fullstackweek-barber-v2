@@ -24,7 +24,7 @@ export const getConfirmationEmailTemplate = (data: NotificationBookingData) => {
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #121214; color: #ededed; border-radius: 8px;">
       <h2 style="color: #22c55e; text-align: center;">Agendamento Confirmado! ✂️</h2>
       <p>Olá, <strong>${data.clientName}</strong>,</p>
-      <p>Seu horário na barbearia <strong>${data.barbershopName}</strong> foi confirmado com sucesso.</p>
+      <p>Seu horário no estabelecimento <strong>${data.barbershopName}</strong> foi confirmado com sucesso.</p>
       
       <div style="background-color: #202024; padding: 16px; border-radius: 6px; margin: 20px 0;">
         <p style="margin: 6px 0;"><strong>Serviço:</strong> ${data.serviceName}</p>
@@ -32,8 +32,8 @@ export const getConfirmationEmailTemplate = (data: NotificationBookingData) => {
         <p style="margin: 6px 0;"><strong>Data e Hora:</strong> ${formattedDate}</p>
       </div>
 
-      <p style="color: #a1a1aa; font-size: 14px;">Caso precise cancelar ou reagendar, acesse o aplicativo VizuGo.</p>
-      <p style="text-align: center; color: #71717a; font-size: 12px; margin-top: 30px;">VizuGo - Sistema de Agendamentos</p>
+      <p style="color: #a1a1aa; font-size: 14px;">Caso precise cancelar ou reagendar, acesse o aplicativo VizUAU.</p>
+      <p style="text-align: center; color: #71717a; font-size: 12px; margin-top: 30px;">VizUAU - Sistema de Agendamentos</p>
     </div>
   `
   const text = `Olá ${data.clientName}, seu agendamento em ${data.barbershopName} para ${data.serviceName} (${data.professionalName ? `com ${data.professionalName}` : ""}) no dia ${formattedDate} foi confirmado.`
@@ -57,7 +57,7 @@ export const getReminderEmailTemplate = (data: NotificationBookingData) => {
       </div>
 
       <p style="color: #a1a1aa; font-size: 14px;">Te esperamos lá! Em caso de imprevistos, cancele com antecedência pelo app.</p>
-      <p style="text-align: center; color: #71717a; font-size: 12px; margin-top: 30px;">VizuGo - Sistema de Agendamentos</p>
+      <p style="text-align: center; color: #71717a; font-size: 12px; margin-top: 30px;">VizUAU - Sistema de Agendamentos</p>
     </div>
   `
   const text = `Olá ${data.clientName}, lembrete do seu agendamento em ${data.barbershopName} para ${data.serviceName} em ${formattedDate}.`
@@ -72,7 +72,7 @@ export const getCancellationEmailTemplate = (data: NotificationBookingData) => {
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #121214; color: #ededed; border-radius: 8px;">
       <h2 style="color: #ef4444; text-align: center;">Agendamento Cancelado ❌</h2>
       <p>Olá, <strong>${data.clientName}</strong>,</p>
-      <p>Informamos que o seu agendamento em <strong>${data.barbershopName}</strong> foi cancelado${data.cancelledBy === "barbershop" ? " pela barbearia" : " por você"}.</p>
+      <p>Informamos que o seu agendamento em <strong>${data.barbershopName}</strong> foi cancelado${data.cancelledBy === "barbershop" ? " pelo estabelecimento" : " por você"}.</p>
       
       <div style="background-color: #202024; padding: 16px; border-radius: 6px; margin: 20px 0;">
         <p style="margin: 6px 0;"><strong>Serviço:</strong> ${data.serviceName}</p>
@@ -80,8 +80,8 @@ export const getCancellationEmailTemplate = (data: NotificationBookingData) => {
         <p style="margin: 6px 0;"><strong>Data e Hora:</strong> ${formattedDate}</p>
       </div>
 
-      <p style="color: #a1a1aa; font-size: 14px;">Você pode realizar um novo agendamento a qualquer momento pelo VizuGo.</p>
-      <p style="text-align: center; color: #71717a; font-size: 12px; margin-top: 30px;">VizuGo - Sistema de Agendamentos</p>
+      <p style="color: #a1a1aa; font-size: 14px;">Você pode realizar um novo agendamento a qualquer momento pelo VizUAU.</p>
+      <p style="text-align: center; color: #71717a; font-size: 12px; margin-top: 30px;">VizUAU - Sistema de Agendamentos</p>
     </div>
   `
   const text = `Olá ${data.clientName}, seu agendamento em ${data.barbershopName} para ${data.serviceName} em ${formattedDate} foi cancelado.`
@@ -98,12 +98,12 @@ export const getWhatsAppMessageText = (
 
   switch (type) {
     case "CONFIRMATION":
-      return `✂️ *VizuGo - Agendamento Confirmado!*\n\nOlá *${data.clientName}*, seu horário na *${data.barbershopName}* foi confirmado!\n\n📋 *Serviço:* ${data.serviceName}${prof}\n📅 *Data:* ${formattedDate}\n\nTe esperamos lá!`
+      return `✂️ *VizUAU - Agendamento Confirmado!*\n\nOlá *${data.clientName}*, seu horário no *${data.barbershopName}* foi confirmado!\n\n📋 *Serviço:* ${data.serviceName}${prof}\n📅 *Data:* ${formattedDate}\n\nTe esperamos lá!`
     case "REMINDER":
-      return `⏰ *VizuGo - Lembrete!*\n\nOlá *${data.clientName}*, passando para lembrar do seu horário na *${data.barbershopName}* em breve.\n\n📋 *Serviço:* ${data.serviceName}${prof}\n📅 *Data:* ${formattedDate}\n\nQualquer imprevisto, avise-nos!`
+      return `⏰ *VizUAU - Lembrete!*\n\nOlá *${data.clientName}*, passando para lembrar do seu horário no *${data.barbershopName}* em breve.\n\n📋 *Serviço:* ${data.serviceName}${prof}\n📅 *Data:* ${formattedDate}\n\nQualquer imprevisto, avise-nos!`
     case "CANCELLATION":
-      return `❌ *VizuGo - Agendamento Cancelado*\n\nOlá *${data.clientName}*, seu agendamento na *${data.barbershopName}* para ${formattedDate} foi cancelado.`
+      return `❌ *VizUAU - Agendamento Cancelado*\n\nOlá *${data.clientName}*, seu agendamento na *${data.barbershopName}* para ${formattedDate} foi cancelado.`
     default:
-      return `VizuGo: Atualização sobre seu agendamento em ${data.barbershopName} (${formattedDate}).`
+      return `VizUAU: Atualização sobre seu agendamento em ${data.barbershopName} (${formattedDate}).`
   }
 }

@@ -29,7 +29,7 @@ export const sendEmail = async ({
 
   try {
     const data = await resend.emails.send({
-      from: "VizuGo <onboarding@resend.dev>",
+      from: "VizUAU <onboarding@resend.dev>",
       to: [to],
       subject,
       html,

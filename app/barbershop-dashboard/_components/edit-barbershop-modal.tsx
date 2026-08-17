@@ -63,7 +63,7 @@ const EditBarbershopModal = ({ barbershop }: EditBarbershopModalProps) => {
       })
       setConfirmOpen(false)
       setSuccessFeedback(true)
-      toast.success("Barbearia atualizada com sucesso!")
+      toast.success("Estabelecimento atualizado com sucesso!")
 
       setTimeout(() => {
         setSuccessFeedback(false)
@@ -71,7 +71,7 @@ const EditBarbershopModal = ({ barbershop }: EditBarbershopModalProps) => {
         router.refresh()
       }, 1500)
     } catch (error) {
-      toast.error("Erro ao atualizar barbearia.")
+      toast.error("Erro ao atualizar estabelecimento.")
       setConfirmOpen(false)
     } finally {
       setLoading(false)
@@ -87,15 +87,16 @@ const EditBarbershopModal = ({ barbershop }: EditBarbershopModalProps) => {
         className="gap-2"
       >
         <Pencil className="h-4 w-4" />
-        Editar Barbearia
+        Editar Estabelecimento
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Editar Barbearia</DialogTitle>
+            <DialogTitle>Editar Estabelecimento</DialogTitle>
             <DialogDescription>
-              Altere as informações e a imagem da sua barbearia cadastrada.
+              Altere as informações e a imagem do seu estabelecimento
+              cadastrado.
             </DialogDescription>
           </DialogHeader>
 
@@ -116,12 +117,12 @@ const EditBarbershopModal = ({ barbershop }: EditBarbershopModalProps) => {
               <div className="space-y-3">
                 <div>
                   <label className="text-xs font-semibold text-gray-400">
-                    Nome da Barbearia
+                    Nome do Estabelecimento
                   </label>
                   <Input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Nome da barbearia"
+                    placeholder="Nome do estabelecimento"
                     required
                   />
                 </div>
@@ -184,7 +185,7 @@ const EditBarbershopModal = ({ barbershop }: EditBarbershopModalProps) => {
                   <Input
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Descrição da barbearia"
+                    placeholder="Descrição do estabelecimento"
                   />
                 </div>
               </div>
@@ -213,7 +214,7 @@ const EditBarbershopModal = ({ barbershop }: EditBarbershopModalProps) => {
             <DialogTitle>Confirmar Alteração</DialogTitle>
             <DialogDescription>
               Tem certeza de que deseja salvar as novas informações e a imagem
-              desta barbearia?
+              deste estabelecimento?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">

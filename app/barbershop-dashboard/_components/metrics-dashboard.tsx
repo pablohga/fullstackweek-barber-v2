@@ -151,7 +151,7 @@ export const MetricsDashboard = ({ barbershopId }: MetricsDashboardProps) => {
         <div>
           <h3 className="text-base font-bold">Métricas do Negócio</h3>
           <p className="text-xs text-gray-400">
-            Acompanhe o faturamento, desempenho e demanda da barbearia
+            Acompanhe o faturamento, desempenho e demanda do estabelecimento
           </p>
         </div>
 

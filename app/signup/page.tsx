@@ -71,7 +71,7 @@ const SignUpPage = () => {
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-bold">Criar Conta de Cliente</h1>
           <p className="text-sm text-gray-400">
-            Cadastre-se para pesquisar barbearias, agendar serviços e
+            Cadastre-se para pesquisar estabelecimentos, agendar serviços e
             qualificar.
           </p>
         </div>

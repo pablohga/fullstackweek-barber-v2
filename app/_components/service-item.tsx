@@ -234,8 +234,8 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                       </div>
                     ) : (
                       <p className="text-xs text-red-500">
-                        Nenhum profissional disponível para esta barbearia no
-                        momento.
+                        Nenhum profissional disponível para este estabelecimento
+                        no momento.
                       </p>
                     )}
                   </div>

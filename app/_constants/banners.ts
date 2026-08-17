@@ -2,7 +2,7 @@ export const DEFAULT_BANNERS = [
   {
     id: "default-1",
     imageUrl: "/banner-01.png",
-    title: "Agende nos melhores com VizuGo",
+    title: "Agende nos melhores com VizUAU",
     order: 0,
   },
   {

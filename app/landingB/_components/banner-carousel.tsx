@@ -52,7 +52,7 @@ export const BannerCarousel = ({ banners }: BannerCarouselProps) => {
           >
             <Image
               src={banner.imageUrl}
-              alt={banner.title || "Banner VizuGo"}
+              alt={banner.title || "Banner VizUAU"}
               fill
               className="object-cover"
               priority={index === 0}

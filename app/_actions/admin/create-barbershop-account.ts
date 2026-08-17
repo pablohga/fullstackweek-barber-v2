@@ -58,7 +58,7 @@ export const createBarbershopAccount = async (
     const hashedPassword = await bcrypt.hash(params.password, 10)
     const newUser = await db.user.create({
       data: {
-        name: params.ownerName || "Barbearia",
+        name: params.ownerName || "Estabelecimento",
         email: params.email,
         password: hashedPassword,
         phone: params.phone,

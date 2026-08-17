@@ -55,7 +55,7 @@ const BarbershopItem = ({ barbershop }: BarbershopItemProps) => {
             <h3 className="truncate font-semibold">{barbershop.name}</h3>
             {barbershop.isVerified && (
               <span
-                title="Barbearia Verificada"
+                title="Estabelecimento Verificado"
                 className="inline-flex items-center"
               >
                 <ShieldCheckIcon size={16} className="shrink-0 text-primary" />

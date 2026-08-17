@@ -50,7 +50,7 @@ const CreateBarbershopModal = ({
     e.preventDefault()
 
     if (mode === "existing_user" && !selectedUserId) {
-      toast.error("Selecione um usuário barbearia existente.")
+      toast.error("Selecione um usuário de estabelecimento existente.")
       return
     }
 
@@ -90,7 +90,7 @@ const CreateBarbershopModal = ({
         billingPeriod,
         billingAmount,
       })
-      toast.success("Barbearia cadastrada com sucesso!")
+      toast.success("Estabelecimento cadastrado com sucesso!")
       setBarbershopName("")
       setOwnerName("")
       setAddress("")
@@ -106,7 +106,7 @@ const CreateBarbershopModal = ({
       setOpen(false)
       router.refresh()
     } catch (error: any) {
-      toast.error(error.message || "Erro ao cadastrar barbearia.")
+      toast.error(error.message || "Erro ao cadastrar estabelecimento.")
     } finally {
       setLoading(false)
     }
@@ -115,16 +115,16 @@ const CreateBarbershopModal = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>+ Adicionar Nova Barbearia</Button>
+        <Button>+ Adicionar Novo Estabelecimento</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Cadastrar Nova Barbearia</DialogTitle>
+          <DialogTitle>Cadastrar Novo Estabelecimento</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <p className="text-xs text-gray-400">
-            Cadastre uma nova barbearia criando uma nova conta de usuário ou
-            vinculando a um usuário existente.
+            Cadastre um novo estabelecimento criando uma nova conta de usuário
+            ou vinculando a um usuário existente.
           </p>
 
           {barbershopUsers.length > 0 && (
@@ -153,7 +153,7 @@ const CreateBarbershopModal = ({
           {mode === "existing_user" ? (
             <div>
               <label className="text-xs font-semibold text-gray-400">
-                Selecione o Usuário Barbearia
+                Selecione o Usuário do Estabelecimento
               </label>
               <select
                 value={selectedUserId}
@@ -190,7 +190,7 @@ const CreateBarbershopModal = ({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="barbearia@email.com"
+                  placeholder="estabelecimento@email.com"
                   required
                 />
               </div>
@@ -200,12 +200,12 @@ const CreateBarbershopModal = ({
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <div>
               <label className="text-xs font-semibold text-gray-400">
-                Nome da Barbearia
+                Nome do Estabelecimento
               </label>
               <Input
                 value={barbershopName}
                 onChange={(e) => setBarbershopName(e.target.value)}
-                placeholder="Ex: Barbearia Central"
+                placeholder="Ex: Estabelecimento Central"
                 required
               />
             </div>
@@ -349,7 +349,7 @@ const CreateBarbershopModal = ({
 
           <div className="flex justify-end space-x-3 border-t pt-4">
             <Button type="submit" disabled={loading}>
-              {loading ? "Cadastrando..." : "Cadastrar Barbearia"}
+              {loading ? "Cadastrando..." : "Cadastrar Estabelecimento"}
             </Button>
           </div>
         </form>

@@ -11,10 +11,10 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: {
-    default: "VizuGo - Encontre a barbearia perfeita perto de você",
-    template: "VizuGo - Encontre a barbearia perfeita perto de você - %s",
+    default: "VizUAU - Encontre o estabelecimento perfeito perto de você",
+    template: "VizUAU - Encontre o estabelecimento perfeito perto de você - %s",
   },
-  description: "Marketplace de agendamento para barbearias",
+  description: "Marketplace de agendamento para estabelecimentos",
   icons: {
     icon: "/favicon.png",
   },

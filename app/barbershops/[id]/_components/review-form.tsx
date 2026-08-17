@@ -39,7 +39,7 @@ const ReviewForm = ({ barbershopId }: ReviewFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border p-5">
-      <h3 className="font-bold">Qualificar esta Barbearia</h3>
+      <h3 className="font-bold">Qualificar este Estabelecimento</h3>
       <div className="flex items-center gap-2">
         <span className="text-sm text-gray-400">Nota (1 a 5):</span>
         {[1, 2, 3, 4, 5].map((star) => (
