@@ -15,6 +15,9 @@ export const metadata: Metadata = {
     template: "BarberZone - Encontre a barbearia perfeita perto de você - %s",
   },
   description: "Marketplace de agendamento para barbearias",
+  icons: {
+    icon: "/favicon.png",
+  },
 }
 
 export default async function RootLayout({
