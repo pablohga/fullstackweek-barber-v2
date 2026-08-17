@@ -7,17 +7,18 @@ import bcrypt from "bcryptjs"
 import { revalidatePath } from "next/cache"
 
 interface CreateBarbershopAccountParams {
+  userId?: string
   barbershopName: string
-  ownerName: string
+  ownerName?: string
   address: string
   complement?: string
   state: string
   city: string
   phone: string
   whatsapp: string
-  email: string
-  password: string
-  confirmPassword: string
+  email?: string
+  password?: string
+  confirmPassword?: string
   billingPeriod?: string
   billingAmount?: string
 }
@@ -37,33 +38,37 @@ export const createBarbershopAccount = async (
     throw new Error("Unauthorized")
   }
 
-  if (params.password !== params.confirmPassword) {
-    throw new Error("As senhas não coincidem.")
-  }
-
-  const existingUser = await db.user.findUnique({
-    where: { email: params.email },
-  })
-
-  if (existingUser) {
-    throw new Error("E-mail já cadastrado.")
-  }
-
-  const hashedPassword = await bcrypt.hash(params.password, 10)
-
   const fullAddress = `${params.address}${params.complement ? ", " + params.complement : ""}, ${params.city} - ${params.state}`
 
-  const user = await db.user.create({
-    data: {
-      name: params.ownerName,
-      email: params.email,
-      password: hashedPassword,
-      phone: params.phone,
-      whatsapp: params.whatsapp,
-      address: fullAddress,
-      role: "BARBERSHOP",
-    },
-  })
+  let targetUserId = params.userId
+
+  if (!targetUserId) {
+    if (!params.email || !params.password || !params.confirmPassword) {
+      throw new Error("Preencha todos os campos obrigatórios de acesso.")
+    }
+    if (params.password !== params.confirmPassword) {
+      throw new Error("As senhas não coincidem.")
+    }
+    const existingUser = await db.user.findUnique({
+      where: { email: params.email },
+    })
+    if (existingUser) {
+      throw new Error("E-mail já cadastrado.")
+    }
+    const hashedPassword = await bcrypt.hash(params.password, 10)
+    const newUser = await db.user.create({
+      data: {
+        name: params.ownerName || "Barbearia",
+        email: params.email,
+        password: hashedPassword,
+        phone: params.phone,
+        whatsapp: params.whatsapp,
+        address: fullAddress,
+        role: "BARBERSHOP",
+      },
+    })
+    targetUserId = newUser.id
+  }
 
   await db.barbershop.create({
     data: {
@@ -73,12 +78,12 @@ export const createBarbershopAccount = async (
       description: `Plano: ${params.billingPeriod || "Mensal"} - R$ ${params.billingAmount || "39,00"}`,
       imageUrl:
         "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=1000&auto=format&fit=crop",
-      userId: user.id,
+      userId: targetUserId,
     },
   })
 
   revalidatePath("/admin")
   revalidatePath("/")
   revalidatePath("/barbershops")
-  return user
+  return { success: true }
 }

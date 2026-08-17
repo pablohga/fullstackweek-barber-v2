@@ -74,6 +74,8 @@ const AdminDashboardPage = async () => {
     })),
   }))
 
+  const barbershopUsers = serializedUsers.filter((u) => u.role === "BARBERSHOP")
+
   return (
     <div>
       <Header />
@@ -81,7 +83,7 @@ const AdminDashboardPage = async () => {
         <h1 className="text-2xl font-bold">Dashboard do Administrador</h1>
 
         {/* Cadastrar Conta de Barbearia */}
-        <CreateBarbershopModal />
+        <CreateBarbershopModal barbershopUsers={barbershopUsers} />
 
         {/* Gerenciamento de Banners da Home */}
         <BannersManagement banners={banners} />

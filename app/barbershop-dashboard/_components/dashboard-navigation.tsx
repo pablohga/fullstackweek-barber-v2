@@ -9,7 +9,6 @@ import {
   UsersIcon,
   BarChart3Icon,
   CalendarDaysIcon,
-  PlusCircleIcon,
 } from "lucide-react"
 
 export const DashboardNavigation = () => {
@@ -48,14 +47,6 @@ export const DashboardNavigation = () => {
             <span>Navegação:</span>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
-            <Button
-              size="sm"
-              variant="ghost"
-              className="shrink-0 gap-1.5 text-xs font-semibold"
-              onClick={() => scrollToSection("section-cadastrar-barbershop")}
-            >
-              <PlusCircleIcon size={14} /> Nova Barbearia
-            </Button>
             <Button
               size="sm"
               variant="ghost"

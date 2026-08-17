@@ -3,7 +3,6 @@ import Header from "../_components/header"
 import { authOptions } from "../_lib/auth"
 import { db } from "../_lib/prisma"
 import { redirect } from "next/navigation"
-import BarbershopForm from "./_components/barbershop-form"
 import ServiceForm from "./_components/service-form"
 import ProfessionalForm from "./_components/professional-form"
 import ProfessionalsManagement from "./_components/professionals-management"
@@ -55,23 +54,11 @@ const BarbershopDashboardPage = async () => {
         {/* Menu de Navegação Flutuante */}
         <DashboardNavigation />
 
-        {/* Cadastrar Barbearia */}
-        <div
-          id="section-cadastrar-barbershop"
-          className="space-y-4 rounded-xl border border-solid p-6"
-        >
-          <h2 className="text-lg font-bold">1. Cadastrar Nova Barbearia</h2>
-          <BarbershopForm />
-        </div>
-
         {/* Gerenciar Barbearias, Serviços e Agendamentos */}
         <div className="space-y-6">
-          <h2 className="text-lg font-bold">
-            2. Suas Barbearias, Profissionais, Serviços e Agendamentos
-          </h2>
           {barbershops.length === 0 ? (
             <p className="text-gray-400">
-              Você ainda não cadastrou nenhuma barbearia.
+              Você ainda não possui nenhuma barbearia ativa.
             </p>
           ) : (
             barbershops.map((barbershop) => (

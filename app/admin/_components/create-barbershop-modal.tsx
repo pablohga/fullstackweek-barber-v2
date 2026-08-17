@@ -14,8 +14,17 @@ import {
   DialogTrigger,
 } from "@/app/_components/ui/dialog"
 
-const CreateBarbershopModal = () => {
+interface CreateBarbershopModalProps {
+  barbershopUsers?: any[]
+}
+
+const CreateBarbershopModal = ({
+  barbershopUsers = [],
+}: CreateBarbershopModalProps) => {
   const [open, setOpen] = useState(false)
+  const [mode, setMode] = useState<"new_user" | "existing_user">("new_user")
+  const [selectedUserId, setSelectedUserId] = useState("")
+
   const [barbershopName, setBarbershopName] = useState("")
   const [ownerName, setOwnerName] = useState("")
   const [address, setAddress] = useState("")
@@ -39,22 +48,26 @@ const CreateBarbershopModal = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (mode === "existing_user" && !selectedUserId) {
+      toast.error("Selecione um usuário barbearia existente.")
+      return
+    }
+
     if (
       !barbershopName ||
-      !ownerName ||
       !address ||
       !state ||
       !city ||
       !phone ||
-      !email ||
-      !password ||
-      !confirmPassword
+      (mode === "new_user" &&
+        (!ownerName || !email || !password || !confirmPassword))
     ) {
       toast.error("Preencha todos os campos obrigatórios.")
       return
     }
 
-    if (password !== confirmPassword) {
+    if (mode === "new_user" && password !== confirmPassword) {
       toast.error("As senhas não coincidem.")
       return
     }
@@ -62,21 +75,22 @@ const CreateBarbershopModal = () => {
     try {
       setLoading(true)
       await createBarbershopAccount({
+        userId: mode === "existing_user" ? selectedUserId : undefined,
         barbershopName,
-        ownerName,
+        ownerName: mode === "new_user" ? ownerName : undefined,
         address,
         complement,
         state,
         city,
         phone,
         whatsapp,
-        email,
-        password,
-        confirmPassword,
+        email: mode === "new_user" ? email : undefined,
+        password: mode === "new_user" ? password : undefined,
+        confirmPassword: mode === "new_user" ? confirmPassword : undefined,
         billingPeriod,
         billingAmount,
       })
-      toast.success("Conta de Barbearia criada com sucesso!")
+      toast.success("Barbearia cadastrada com sucesso!")
       setBarbershopName("")
       setOwnerName("")
       setAddress("")
@@ -88,19 +102,14 @@ const CreateBarbershopModal = () => {
       setEmail("")
       setPassword("")
       setConfirmPassword("")
-      setBillingPeriod("Mensal")
-      setBillingAmount("39,00")
+      setSelectedUserId("")
       setOpen(false)
       router.refresh()
     } catch (error: any) {
-      toast.error(error.message || "Erro ao criar conta de barbearia.")
+      toast.error(error.message || "Erro ao cadastrar barbearia.")
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleEmitirCobranca = () => {
-    toast.info("Função Emitir cobrança será implementada futuramente.")
   }
 
   return (
@@ -114,9 +123,79 @@ const CreateBarbershopModal = () => {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <p className="text-xs text-gray-400">
-            Cadastre uma nova barbearia e defina as informações de acesso e
-            cobrança.
+            Cadastre uma nova barbearia criando uma nova conta de usuário ou
+            vinculando a um usuário existente.
           </p>
+
+          {barbershopUsers.length > 0 && (
+            <div className="flex gap-4 border-b pb-3">
+              <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold">
+                <input
+                  type="radio"
+                  name="createMode"
+                  checked={mode === "new_user"}
+                  onChange={() => setMode("new_user")}
+                />
+                Criar Novo Usuário
+              </label>
+              <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold">
+                <input
+                  type="radio"
+                  name="createMode"
+                  checked={mode === "existing_user"}
+                  onChange={() => setMode("existing_user")}
+                />
+                Vincular a Usuário Existente
+              </label>
+            </div>
+          )}
+
+          {mode === "existing_user" ? (
+            <div>
+              <label className="text-xs font-semibold text-gray-400">
+                Selecione o Usuário Barbearia
+              </label>
+              <select
+                value={selectedUserId}
+                onChange={(e) => setSelectedUserId(e.target.value)}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                required
+              >
+                <option value="">Selecione um usuário...</option>
+                {barbershopUsers.map((u: any) => (
+                  <option key={u.id} value={u.id}>
+                    {u.name} ({u.email})
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <div>
+                <label className="text-xs font-semibold text-gray-400">
+                  Nome do Responsável
+                </label>
+                <Input
+                  value={ownerName}
+                  onChange={(e) => setOwnerName(e.target.value)}
+                  placeholder="Ex: João Silva"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-gray-400">
+                  E-mail de Acesso
+                </label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="barbearia@email.com"
+                  required
+                />
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <div>
@@ -130,17 +209,34 @@ const CreateBarbershopModal = () => {
                 required
               />
             </div>
-            <div>
-              <label className="text-xs font-semibold text-gray-400">
-                Nome do Responsável
-              </label>
-              <Input
-                value={ownerName}
-                onChange={(e) => setOwnerName(e.target.value)}
-                placeholder="Ex: João Silva"
-                required
-              />
-            </div>
+            {mode === "new_user" && (
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-xs font-semibold text-gray-400">
+                    Senha
+                  </label>
+                  <Input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="******"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-400">
+                    Confirmação
+                  </label>
+                  <Input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="******"
+                    required
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -217,46 +313,6 @@ const CreateBarbershopModal = () => {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-gray-400">
-              E-mail
-            </label>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="barbearia@email.com"
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <div>
-              <label className="text-xs font-semibold text-gray-400">
-                Senha
-              </label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="******"
-                required
-              />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-gray-400">
-                Confirmação de Senha
-              </label>
-              <Input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="******"
-                required
-              />
-            </div>
-          </div>
-
-          <div>
             <label className="mb-2 block text-xs font-semibold text-gray-400">
               Período de Cobrança
             </label>
@@ -292,13 +348,6 @@ const CreateBarbershopModal = () => {
           </div>
 
           <div className="flex justify-end space-x-3 border-t pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleEmitirCobranca}
-            >
-              Emitir cobrança
-            </Button>
             <Button type="submit" disabled={loading}>
               {loading ? "Cadastrando..." : "Cadastrar Barbearia"}
             </Button>
