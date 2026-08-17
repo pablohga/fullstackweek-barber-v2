@@ -38,7 +38,7 @@ export const BannerCarousel = ({ banners }: BannerCarouselProps) => {
   }
 
   return (
-    <div className="group relative h-[180px] w-full overflow-hidden rounded-3xl border shadow-2xl sm:h-[260px] md:h-[320px]">
+    <div className="group relative h-[200px] w-full overflow-hidden rounded-3xl border shadow-2xl sm:h-[350px] lg:h-[480px]">
       {/* Slides */}
       <div className="relative h-full w-full">
         {banners.map((banner, index) => (
@@ -52,7 +52,7 @@ export const BannerCarousel = ({ banners }: BannerCarouselProps) => {
           >
             <Image
               src={banner.imageUrl}
-              alt={banner.title || "Banner BarberZone"}
+              alt={banner.title || "Banner VizuGo"}
               fill
               className="object-cover"
               priority={index === 0}

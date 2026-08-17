@@ -98,7 +98,7 @@ const LandingBPage = async () => {
 
             <div className="relative h-[220px] w-full overflow-hidden rounded-2xl shadow-2xl sm:h-[280px] lg:col-span-5">
               <Image
-                alt="BarberZone Marketplace"
+                alt="VizuGo Marketplace"
                 src="/banner-01.png"
                 fill
                 className="object-cover transition-transform duration-500 hover:scale-105"

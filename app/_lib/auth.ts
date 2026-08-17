@@ -80,6 +80,5 @@ export const authOptions: AuthOptions = {
     },
   },
   secret:
-    process.env.NEXTAUTH_SECRET ||
-    "barberzone-super-secret-jwt-key-2026-secure",
+    process.env.NEXTAUTH_SECRET || "vizugo-super-secret-jwt-key-2026-secure",
 }

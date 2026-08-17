@@ -113,7 +113,7 @@ const SidebarSheet = () => {
             >
               <Link href="/admin">
                 <LogInIcon size={18} />
-                Gerenciar BARBERZONE
+                Gerenciar VizuGo
               </Link>
             </Button>
           </SheetClose>

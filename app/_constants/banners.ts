@@ -2,7 +2,7 @@ export const DEFAULT_BANNERS = [
   {
     id: "default-1",
     imageUrl: "/banner-01.png",
-    title: "Agende nos melhores com BarberZone",
+    title: "Agende nos melhores com VizuGo",
     order: 0,
   },
   {

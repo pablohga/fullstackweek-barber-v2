@@ -32,8 +32,8 @@ export const getConfirmationEmailTemplate = (data: NotificationBookingData) => {
         <p style="margin: 6px 0;"><strong>Data e Hora:</strong> ${formattedDate}</p>
       </div>
 
-      <p style="color: #a1a1aa; font-size: 14px;">Caso precise cancelar ou reagendar, acesse o aplicativo BarberZone.</p>
-      <p style="text-align: center; color: #71717a; font-size: 12px; margin-top: 30px;">BarberZone - Sistema de Agendamentos</p>
+      <p style="color: #a1a1aa; font-size: 14px;">Caso precise cancelar ou reagendar, acesse o aplicativo VizuGo.</p>
+      <p style="text-align: center; color: #71717a; font-size: 12px; margin-top: 30px;">VizuGo - Sistema de Agendamentos</p>
     </div>
   `
   const text = `Olá ${data.clientName}, seu agendamento em ${data.barbershopName} para ${data.serviceName} (${data.professionalName ? `com ${data.professionalName}` : ""}) no dia ${formattedDate} foi confirmado.`
@@ -57,7 +57,7 @@ export const getReminderEmailTemplate = (data: NotificationBookingData) => {
       </div>
 
       <p style="color: #a1a1aa; font-size: 14px;">Te esperamos lá! Em caso de imprevistos, cancele com antecedência pelo app.</p>
-      <p style="text-align: center; color: #71717a; font-size: 12px; margin-top: 30px;">BarberZone - Sistema de Agendamentos</p>
+      <p style="text-align: center; color: #71717a; font-size: 12px; margin-top: 30px;">VizuGo - Sistema de Agendamentos</p>
     </div>
   `
   const text = `Olá ${data.clientName}, lembrete do seu agendamento em ${data.barbershopName} para ${data.serviceName} em ${formattedDate}.`
@@ -80,8 +80,8 @@ export const getCancellationEmailTemplate = (data: NotificationBookingData) => {
         <p style="margin: 6px 0;"><strong>Data e Hora:</strong> ${formattedDate}</p>
       </div>
 
-      <p style="color: #a1a1aa; font-size: 14px;">Você pode realizar um novo agendamento a qualquer momento pelo BarberZone.</p>
-      <p style="text-align: center; color: #71717a; font-size: 12px; margin-top: 30px;">BarberZone - Sistema de Agendamentos</p>
+      <p style="color: #a1a1aa; font-size: 14px;">Você pode realizar um novo agendamento a qualquer momento pelo VizuGo.</p>
+      <p style="text-align: center; color: #71717a; font-size: 12px; margin-top: 30px;">VizuGo - Sistema de Agendamentos</p>
     </div>
   `
   const text = `Olá ${data.clientName}, seu agendamento em ${data.barbershopName} para ${data.serviceName} em ${formattedDate} foi cancelado.`
@@ -98,12 +98,12 @@ export const getWhatsAppMessageText = (
 
   switch (type) {
     case "CONFIRMATION":
-      return `✂️ *BarberZone - Agendamento Confirmado!*\n\nOlá *${data.clientName}*, seu horário na *${data.barbershopName}* foi confirmado!\n\n📋 *Serviço:* ${data.serviceName}${prof}\n📅 *Data:* ${formattedDate}\n\nTe esperamos lá!`
+      return `✂️ *VizuGo - Agendamento Confirmado!*\n\nOlá *${data.clientName}*, seu horário na *${data.barbershopName}* foi confirmado!\n\n📋 *Serviço:* ${data.serviceName}${prof}\n📅 *Data:* ${formattedDate}\n\nTe esperamos lá!`
     case "REMINDER":
-      return `⏰ *BarberZone - Lembrete!*\n\nOlá *${data.clientName}*, passando para lembrar do seu horário na *${data.barbershopName}* em breve.\n\n📋 *Serviço:* ${data.serviceName}${prof}\n📅 *Data:* ${formattedDate}\n\nQualquer imprevisto, avise-nos!`
+      return `⏰ *VizuGo - Lembrete!*\n\nOlá *${data.clientName}*, passando para lembrar do seu horário na *${data.barbershopName}* em breve.\n\n📋 *Serviço:* ${data.serviceName}${prof}\n📅 *Data:* ${formattedDate}\n\nQualquer imprevisto, avise-nos!`
     case "CANCELLATION":
-      return `❌ *BarberZone - Agendamento Cancelado*\n\nOlá *${data.clientName}*, seu agendamento na *${data.barbershopName}* para ${formattedDate} foi cancelado.`
+      return `❌ *VizuGo - Agendamento Cancelado*\n\nOlá *${data.clientName}*, seu agendamento na *${data.barbershopName}* para ${formattedDate} foi cancelado.`
     default:
-      return `BarberZone: Atualização sobre seu agendamento em ${data.barbershopName} (${formattedDate}).`
+      return `VizuGo: Atualização sobre seu agendamento em ${data.barbershopName} (${formattedDate}).`
   }
 }

@@ -37,7 +37,7 @@ const Bookings = async () => {
               </h1>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 Você precisa estar conectado para visualizar e gerenciar seus
-                agendamentos na BARBERZONE.
+                agendamentos na VizuGo.
               </p>
             </div>
             <div className="pt-2">

@@ -19,7 +19,7 @@ const Header = () => {
     <Card className="rounded-none border-x-0 border-t-0">
       <CardContent className="mx-auto flex w-full max-w-7xl flex-row items-center justify-between p-5">
         <Link href="/">
-          <Image alt="BarberZone" src="/logo.png" height={18} width={120} />
+          <Image alt="VizuGo" src="/logo.png" height={18} width={120} />
         </Link>
 
         {/* Desktop Navbar (hidden on mobile, flex on md+) */}

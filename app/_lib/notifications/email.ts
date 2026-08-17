@@ -29,7 +29,7 @@ export const sendEmail = async ({
 
   try {
     const data = await resend.emails.send({
-      from: "BarberZone <onboarding@resend.dev>",
+      from: "VizuGo <onboarding@resend.dev>",
       to: [to],
       subject,
       html,

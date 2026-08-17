@@ -47,7 +47,7 @@ const ProfilePage = async () => {
               </h1>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 Você precisa estar conectado para visualizar e gerenciar seu
-                perfil na BARBERZONE.
+                perfil na VizuGo.
               </p>
             </div>
             <div className="pt-2">

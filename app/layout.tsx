@@ -11,8 +11,8 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: {
-    default: "BarberZone - Encontre a barbearia perfeita perto de você",
-    template: "BarberZone - Encontre a barbearia perfeita perto de você - %s",
+    default: "VizuGo - Encontre a barbearia perfeita perto de você",
+    template: "VizuGo - Encontre a barbearia perfeita perto de você - %s",
   },
   description: "Marketplace de agendamento para barbearias",
   icons: {
