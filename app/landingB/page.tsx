@@ -54,28 +54,9 @@ const LandingBPage = async () => {
           <div className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
 
           <div className="relative z-10 grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
-            <div className="space-y-6 lg:col-span-7">
-              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                <SparklesIcon size={14} />
-                <span>O Maior Marketplace de Barbearias do Brasil</span>
-              </div>
-
-              <div className="space-y-2">
-                <h1 className="text-3xl font-extrabold tracking-tight sm:text-5xl">
-                  Olá,{" "}
-                  <span className="text-primary">
-                    {session?.user ? session.user.name : "Bem-vindo"}
-                  </span>
-                  ! ✂️
-                </h1>
-                <p className="text-sm capitalize text-gray-400 sm:text-base">
-                  {format(new Date(), "EEEE, dd 'de' MMMM", { locale: ptBR })} •
-                  Encontre os melhores profissionais e agende em segundos.
-                </p>
-              </div>
-
+            <div className="space-y-12 lg:col-span-12">
               {/* Barra de Busca Prominente */}
-              <div className="max-w-xl">
+              <div className="w-full">
                 <Search />
               </div>
 
@@ -94,16 +75,6 @@ const LandingBPage = async () => {
                   <span>Avaliações Reais 5.0</span>
                 </div>
               </div>
-            </div>
-
-            <div className="relative h-[220px] w-full overflow-hidden rounded-2xl shadow-2xl sm:h-[280px] lg:col-span-5">
-              <Image
-                alt="VizuGo Marketplace"
-                src="/banner-01.png"
-                fill
-                className="object-cover transition-transform duration-500 hover:scale-105"
-                priority
-              />
             </div>
           </div>
         </section>
