@@ -73,8 +73,12 @@ model Barbershop {
   phones        String[]
   description   String
   imageUrl      String
-  isVerified    Boolean             @default(false)
-  featuredUntil DateTime?
+  isVerified          Boolean             @default(false)
+  featuredUntil       DateTime?
+  stripeCustomerId    String?
+  stripeSubscriptionId String?
+  subscriptionStatus  String?             @default("inactive")
+  subscriptionPlanId  String?
   userId        String?
   user          User?               @relation(fields: [userId], references: [id])
   createdAt     DateTime            @default(now())

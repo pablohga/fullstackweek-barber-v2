@@ -92,12 +92,12 @@ export const BannersManagement = ({ banners }: BannersManagementProps) => {
       <div className="flex items-center gap-2">
         <ImageIcon className="h-5 w-5 text-primary" />
         <h3 className="text-lg font-bold">
-          Gerenciamento de Banners da Home (LandingB)
+          Gerenciamento de Banners da Home (/)
         </h3>
       </div>
       <p className="text-xs text-gray-400">
-        Personalize os 3 banners do carrossel da página inicial (/landingB). Se
-        remover a customização, o sistema usará a imagem padrão.
+        Personalize os 3 banners do carrossel da página inicial (/). Se remover
+        a customização, o sistema usará a imagem padrão.
       </p>
 
       <div className="grid grid-cols-1 gap-6 pt-4 md:grid-cols-3">

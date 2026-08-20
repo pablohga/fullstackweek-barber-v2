@@ -78,6 +78,7 @@ export const upsertBanner = async (params: UpsertBannerParams) => {
   }
 
   revalidatePath("/admin")
+  revalidatePath("/")
   revalidatePath("/landingB")
   return { success: true }
 }
@@ -99,6 +100,7 @@ export const resetBanner = async (order: number) => {
   })
 
   revalidatePath("/admin")
+  revalidatePath("/")
   revalidatePath("/landingB")
   return { success: true }
 }
