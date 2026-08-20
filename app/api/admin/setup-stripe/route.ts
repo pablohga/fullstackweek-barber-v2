@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import { stripe } from "@/app/_lib/stripe"
 
+export const dynamic = "force-dynamic"
+
 export async function GET() {
   try {
     // 1. Create Product for Estabelecimento
