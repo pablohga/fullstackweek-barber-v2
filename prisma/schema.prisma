@@ -205,3 +205,16 @@ model PricingPlan {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model FeaturedPlan {
+  id           String   @id @default(uuid())
+  name         String
+  price        String
+  period       String
+  durationDays Int      @default(30)
+  description  String
+  priceId      String
+  features     String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

@@ -9,6 +9,8 @@ import { getBanners } from "@/app/_actions/admin/manage-banners"
 import { BannersManagement } from "./_components/banners-management"
 import { getPricingPlans } from "@/app/_actions/admin/manage-pricing"
 import { PricingManagement } from "./_components/pricing-management"
+import { getFeaturedPlans } from "@/app/_actions/admin/manage-featured"
+import { FeaturedManagement } from "./_components/featured-management"
 
 export const dynamic = "force-dynamic"
 
@@ -30,7 +32,7 @@ const AdminDashboardPage = async () => {
     redirect("/")
   }
 
-  const [users, banners, pricingPlans] = await Promise.all([
+  const [users, banners, pricingPlans, featuredPlans] = await Promise.all([
     db.user.findMany({
       include: {
         bookings: {
@@ -47,6 +49,7 @@ const AdminDashboardPage = async () => {
     }),
     getBanners(),
     getPricingPlans(),
+    getFeaturedPlans(),
   ])
 
   const serializedUsers = users.map((user) => ({
@@ -85,6 +88,12 @@ const AdminDashboardPage = async () => {
     updatedAt: plan.updatedAt.toISOString(),
   }))
 
+  const serializedFeaturedPlans = featuredPlans.map((plan) => ({
+    ...plan,
+    createdAt: plan.createdAt.toISOString(),
+    updatedAt: plan.updatedAt.toISOString(),
+  }))
+
   return (
     <div>
       <Header />
@@ -99,6 +108,9 @@ const AdminDashboardPage = async () => {
 
         {/* Gerenciamento de Planos e Preços */}
         <PricingManagement plans={serializedPricingPlans} />
+
+        {/* Gerenciamento de Pacotes de Destaque */}
+        <FeaturedManagement plans={serializedFeaturedPlans} />
 
         {/* Gerenciamento de Usuários (Clientes e Estabelecimentos) */}
         <UsersManagement users={serializedUsers} />
