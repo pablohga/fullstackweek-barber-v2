@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/_lib/auth"
 import { db } from "@/app/_lib/prisma"
 import { PricingCards } from "./_components/pricing-cards"
+import { getPricingPlans } from "@/app/_actions/admin/manage-pricing"
 
 export const dynamic = "force-dynamic"
 
@@ -27,6 +28,8 @@ export default async function LandingCPage() {
       barbershopId = shop.id
     }
   }
+
+  const pricingPlans = await getPricingPlans()
 
   return (
     <div className="min-h-screen bg-[#0a0a0c] font-sans text-zinc-100 selection:bg-amber-400 selection:text-black">
@@ -212,7 +215,10 @@ export default async function LandingCPage() {
             </p>
           </div>
 
-          <PricingCards barbershopId={barbershopId} />
+          <PricingCards
+            plans={JSON.parse(JSON.stringify(pricingPlans))}
+            barbershopId={barbershopId}
+          />
         </div>
       </section>
 
