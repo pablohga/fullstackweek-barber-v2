@@ -66,17 +66,25 @@ const config = {
         },
 
         barber: {
-          black: "#0A0A0A",
-          charcoal: "#171717",
+          black: "#0D0D0D",
+          charcoal: "#1A1A1A",
 
-          gold: "#C8A35D",
-          goldLight: "#E6C27A",
-          goldDark: "#A37B2C",
+          gold: "#D4AF37",
+          goldLight: "#F3E5AB",
+          goldDark: "#B8860B",
 
           silver: "#D9D9D9",
           steel: "#9A9A9A",
 
-          white: "#F8F8F8",
+          white: "#F5F5F5",
+        },
+
+        vizuau: {
+          gold: "#D4AF37",
+          goldDark: "#B8860B",
+          dark: "#0D0D0D",
+          charcoal: "#1A1A1A",
+          light: "#F5F5F5",
         },
       },
 

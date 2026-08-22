@@ -6,43 +6,43 @@
   .dark {
 
     /* Fundo */
-    --background: 0 0% 4%;
-    --foreground: 40 22% 96%;
+    --background: 0 0% 5%;
+    --foreground: 0 0% 96%;
 
     /* Cards */
-    --card: 0 0% 8%;
-    --card-foreground: 40 22% 96%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 96%;
 
     /* Popover */
-    --popover: 0 0% 8%;
-    --popover-foreground: 40 22% 96%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 96%;
 
-    /* Dourado Barber Zone */
-    --primary: 39 49% 58%;
-    --primary-foreground: 0 0% 6%;
+    /* Dourado VizUAU (#D4AF37) */
+    --primary: 45 63% 52%;
+    --primary-foreground: 0 0% 5%;
 
     /* Grafite */
     --secondary: 0 0% 12%;
-    --secondary-foreground: 40 22% 96%;
+    --secondary-foreground: 0 0% 96%;
 
     /* Superfícies */
-    --muted: 0 0% 10%;
+    --muted: 0 0% 12%;
     --muted-foreground: 0 0% 65%;
 
-    /* Hover */
-    --accent: 39 42% 24%;
-    --accent-foreground: 40 22% 96%;
+    /* Hover / Accent (Ouro Envelhecido #B8860B) */
+    --accent: 43 89% 38%;
+    --accent-foreground: 0 0% 96%;
 
     /* Erro */
     --destructive: 0 75% 56%;
-    --destructive-foreground: 40 22% 96%;
+    --destructive-foreground: 0 0% 96%;
 
     /* Bordas */
-    --border: 39 18% 22%;
-    --input: 39 18% 22%;
+    --border: 45 30% 20%;
+    --input: 45 30% 20%;
 
     /* Focus */
-    --ring: 39 49% 58%;
+    --ring: 45 63% 52%;
 
     --radius: .75rem;
   }
