@@ -64,6 +64,6 @@ export const setWorkingHours = async (params: SetWorkingHoursParams) => {
     })
   }
 
-  revalidatePath(`/barbershops/${professional.barbershopId}`)
+  revalidatePath("/barbershops", "layout")
   revalidatePath("/barbershop-dashboard")
 }

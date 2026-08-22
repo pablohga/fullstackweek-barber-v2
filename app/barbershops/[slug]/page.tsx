@@ -21,13 +21,22 @@ import { authOptions } from "@/app/_lib/auth"
 
 interface BarbershopPageProps {
   params: {
-    id: string
+    slug: string
   }
 }
 
 export async function generateMetadata({ params }: BarbershopPageProps) {
-  const barbershop = await db.barbershop.findUnique({
-    where: { id: params.id },
+  const decodedSlug = decodeURIComponent(params.slug)
+  const normalizedSlug = decodedSlug.replace(/-/g, " ")
+
+  const barbershop = await db.barbershop.findFirst({
+    where: {
+      OR: [
+        { id: decodedSlug },
+        { name: { equals: decodedSlug, mode: "insensitive" } },
+        { name: { equals: normalizedSlug, mode: "insensitive" } },
+      ],
+    },
   })
   return {
     title: barbershop ? barbershop.name : "Detalhes do Estabelecimento",
@@ -36,10 +45,16 @@ export async function generateMetadata({ params }: BarbershopPageProps) {
 
 const BarbershopPage = async ({ params }: BarbershopPageProps) => {
   const session = await getServerSession(authOptions)
+  const decodedSlug = decodeURIComponent(params.slug)
+  const normalizedSlug = decodedSlug.replace(/-/g, " ")
 
-  const barbershop = await db.barbershop.findUnique({
+  let barbershop = await db.barbershop.findFirst({
     where: {
-      id: params.id,
+      OR: [
+        { id: decodedSlug },
+        { name: { equals: decodedSlug, mode: "insensitive" } },
+        { name: { equals: normalizedSlug, mode: "insensitive" } },
+      ],
     },
     include: {
       services: true,
@@ -58,6 +73,41 @@ const BarbershopPage = async ({ params }: BarbershopPageProps) => {
       },
     },
   })
+
+  if (!barbershop) {
+    const allBarbershops = await db.barbershop.findMany({
+      include: {
+        services: true,
+        professionals: {
+          where: {
+            active: true,
+          },
+        },
+        reviews: {
+          include: {
+            user: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
+    })
+
+    const slugify = (str: string) =>
+      str
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/[^\w\-]+/g, "")
+
+    barbershop =
+      allBarbershops.find(
+        (shop) => slugify(shop.name) === slugify(decodedSlug),
+      ) || null
+  }
 
   if (!barbershop) {
     return notFound()

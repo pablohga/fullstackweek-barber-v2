@@ -26,6 +26,6 @@ export const createReview = async (params: CreateReviewParams) => {
     },
   })
 
-  revalidatePath(`/barbershops/${params.barbershopId}`)
+  revalidatePath("/barbershops", "layout")
   return review
 }

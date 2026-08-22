@@ -41,6 +41,6 @@ export const updateBarbershop = async (params: UpdateBarbershopParams) => {
 
   revalidatePath("/barbershop-dashboard")
   revalidatePath("/")
-  revalidatePath(`/barbershops/${params.id}`)
+  revalidatePath("/barbershops", "layout")
   return updatedBarbershop
 }

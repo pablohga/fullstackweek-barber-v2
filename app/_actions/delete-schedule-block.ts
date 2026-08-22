@@ -27,6 +27,6 @@ export const deleteScheduleBlock = async (blockId: string) => {
     where: { id: blockId },
   })
 
-  revalidatePath(`/barbershops/${block.professional.barbershopId}`)
+  revalidatePath("/barbershops", "layout")
   revalidatePath("/barbershop-dashboard")
 }

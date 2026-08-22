@@ -64,7 +64,11 @@ const BarbershopItem = ({ barbershop }: BarbershopItemProps) => {
           </div>
           <p className="truncate text-sm text-gray-400">{barbershop.address}</p>
           <Button variant="secondary" className="mt-3 w-full" asChild>
-            <Link href={`/barbershops/${barbershop.id}`}>Reservar</Link>
+            <Link
+              href={`/barbershops/${encodeURIComponent(barbershop.name.trim().replace(/\s+/g, "-"))}`}
+            >
+              Reservar
+            </Link>
           </Button>
         </div>
       </CardContent>

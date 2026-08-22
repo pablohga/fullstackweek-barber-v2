@@ -40,7 +40,7 @@ export const updateProfessional = async (params: UpdateProfessionalParams) => {
     },
   })
 
-  revalidatePath(`/barbershops/${professional.barbershopId}`)
+  revalidatePath("/barbershops", "layout")
   revalidatePath("/barbershop-dashboard")
   return updated
 }

@@ -35,7 +35,7 @@ export const createProfessional = async (params: CreateProfessionalParams) => {
     },
   })
 
-  revalidatePath(`/barbershops/${params.barbershopId}`)
+  revalidatePath("/barbershops", "layout")
   revalidatePath("/barbershop-dashboard")
   return professional
 }

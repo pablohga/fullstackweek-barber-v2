@@ -43,7 +43,7 @@ export const createScheduleBlock = async (
     },
   })
 
-  revalidatePath(`/barbershops/${professional.barbershopId}`)
+  revalidatePath("/barbershops", "layout")
   revalidatePath("/barbershop-dashboard")
   return block
 }

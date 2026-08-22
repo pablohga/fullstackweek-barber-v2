@@ -37,7 +37,7 @@ export const createService = async (params: CreateServiceParams) => {
     },
   })
 
-  revalidatePath(`/barbershops/${params.barbershopId}`)
+  revalidatePath("/barbershops", "layout")
   revalidatePath("/barbershop-dashboard")
   return service
 }
