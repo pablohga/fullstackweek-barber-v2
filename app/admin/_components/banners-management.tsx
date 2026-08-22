@@ -18,13 +18,17 @@ export const BannersManagement = ({ banners }: BannersManagementProps) => {
   const [loadingOrder, setLoadingOrder] = useState<number | null>(null)
 
   const [formData, setFormData] = useState<
-    Record<number, { imageUrl: string; title: string }>
+    Record<number, { imageUrl: string; title: string; linkUrl: string }>
   >(() => {
-    const initial: Record<number, { imageUrl: string; title: string }> = {}
+    const initial: Record<
+      number,
+      { imageUrl: string; title: string; linkUrl: string }
+    > = {}
     banners.forEach((b) => {
       initial[b.order] = {
         imageUrl: b.imageUrl || "",
         title: b.title || "",
+        linkUrl: b.linkUrl || "",
       }
     })
     return initial
@@ -32,13 +36,13 @@ export const BannersManagement = ({ banners }: BannersManagementProps) => {
 
   const handleChange = (
     order: number,
-    field: "imageUrl" | "title",
+    field: "imageUrl" | "title" | "linkUrl",
     value: string,
   ) => {
     setFormData((prev) => ({
       ...prev,
       [order]: {
-        ...(prev[order] || { imageUrl: "", title: "" }),
+        ...(prev[order] || { imageUrl: "", title: "", linkUrl: "" }),
         [field]: value,
       },
     }))
@@ -57,6 +61,7 @@ export const BannersManagement = ({ banners }: BannersManagementProps) => {
         order,
         imageUrl: data.imageUrl,
         title: data.title,
+        linkUrl: data.linkUrl,
       })
       toast.success(`Banner ${order + 1} atualizado com sucesso!`)
       router.refresh()
@@ -169,6 +174,19 @@ export const BannersManagement = ({ banners }: BannersManagementProps) => {
                       placeholder="https://exemplo.com/imagem.png"
                       className="text-xs"
                       required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-semibold text-gray-400">
+                      URL do Link (Opcional)
+                    </label>
+                    <Input
+                      value={currentForm.linkUrl}
+                      onChange={(e) =>
+                        handleChange(order, "linkUrl", e.target.value)
+                      }
+                      placeholder="/caminho ou https://..."
+                      className="text-xs"
                     />
                   </div>
                 </div>

@@ -41,31 +41,53 @@ export const BannerCarousel = ({ banners }: BannerCarouselProps) => {
     <div className="group relative h-[200px] w-full overflow-hidden rounded-3xl border shadow-2xl sm:h-[350px] lg:h-[480px]">
       {/* Slides */}
       <div className="relative h-full w-full">
-        {banners.map((banner, index) => (
-          <div
-            key={banner.id || index}
-            className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-              index === currentIndex
-                ? "z-10 opacity-100"
-                : "pointer-events-none z-0 opacity-0"
-            }`}
-          >
-            <Image
-              src={banner.imageUrl}
-              alt={banner.title || "Banner VizUAU"}
-              fill
-              className="object-cover"
-              priority={index === 0}
-            />
-            <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/20 to-transparent p-6 sm:p-8">
-              {banner.title && (
-                <h2 className="text-lg font-bold text-white drop-shadow-md sm:text-2xl">
-                  {banner.title}
-                </h2>
+        {banners.map((banner, index) => {
+          const content = (
+            <div className="relative h-full w-full">
+              <Image
+                src={banner.imageUrl}
+                alt={banner.title || "Banner VizUAU"}
+                fill
+                className="object-cover"
+                priority={index === 0}
+              />
+              <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/20 to-transparent p-6 sm:p-8">
+                {banner.title && (
+                  <h2 className="text-lg font-bold text-white drop-shadow-md sm:text-2xl">
+                    {banner.title}
+                  </h2>
+                )}
+              </div>
+            </div>
+          )
+
+          const hasLink = banner.linkUrl && banner.linkUrl.trim() !== ""
+
+          return (
+            <div
+              key={banner.id || index}
+              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                index === currentIndex
+                  ? "z-10 opacity-100"
+                  : "pointer-events-none z-0 opacity-0"
+              }`}
+            >
+              {hasLink ? (
+                <a
+                  href={banner.linkUrl!}
+                  className="block h-full w-full cursor-pointer"
+                  {...(banner.linkUrl!.startsWith("http")
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
+                >
+                  {content}
+                </a>
+              ) : (
+                content
               )}
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Navigation Arrows */}

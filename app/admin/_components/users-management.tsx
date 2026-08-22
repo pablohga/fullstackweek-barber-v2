@@ -7,6 +7,7 @@ import { updateUser } from "@/app/_actions/admin/update-user"
 import { updatePassword } from "@/app/_actions/admin/update-password"
 import { deleteUser } from "@/app/_actions/admin/delete-user"
 import { updateBarbershopAccount } from "@/app/_actions/admin/update-barbershop-account"
+import { addFreeDays } from "@/app/_actions/admin/add-free-days"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import {
@@ -52,6 +53,8 @@ const UsersManagement = ({
 
   const [newPassword, setNewPassword] = useState("")
   const [passwordModalUser, setPasswordModalUser] = useState<any>(null)
+  const [freeDaysModalUser, setFreeDaysModalUser] = useState<any>(null)
+  const [daysToAdd, setDaysToAdd] = useState<string>("30")
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
@@ -201,6 +204,32 @@ const UsersManagement = ({
     }
   }
 
+  const handleAddFreeDaysSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!freeDaysModalUser) return
+    const daysNum = parseInt(daysToAdd, 10)
+    if (isNaN(daysNum) || daysNum <= 0) {
+      toast.error("Informe uma quantidade válida de dias.")
+      return
+    }
+
+    try {
+      setLoading(true)
+      await addFreeDays({
+        userId: freeDaysModalUser.id,
+        days: daysNum,
+      })
+      toast.success(`${daysNum} dias adicionados com sucesso!`)
+      setFreeDaysModalUser(null)
+      setDaysToAdd("30")
+      router.refresh()
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao adicionar dias.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleEmitirCobranca = () => {
     toast.info("Função Emitir cobrança será implementada futuramente.")
   }
@@ -319,6 +348,15 @@ const UsersManagement = ({
                 </td>
                 <td className="p-3">{renderPlanInfo(user)}</td>
                 <td className="space-x-2 p-3 text-right">
+                  {user.role === "BARBERSHOP" && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setFreeDaysModalUser(user)}
+                    >
+                      Adicionar tempo Gratis
+                    </Button>
+                  )}
                   <Button
                     size="sm"
                     variant="outline"
@@ -724,6 +762,74 @@ const UsersManagement = ({
             </div>
             <Button type="submit" disabled={loading}>
               {loading ? "Alterando..." : "Alterar Senha"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Adicionar Tempo Grátis */}
+      <Dialog
+        open={!!freeDaysModalUser}
+        onOpenChange={() => setFreeDaysModalUser(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Adicionar Tempo Grátis para{" "}
+              {freeDaysModalUser?.barbershops?.[0]?.name ||
+                freeDaysModalUser?.name}
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAddFreeDaysSubmit} className="space-y-4">
+            <div>
+              <label className="text-xs font-semibold text-gray-400">
+                Quantidade de Dias
+              </label>
+              <Input
+                type="number"
+                min="1"
+                value={daysToAdd}
+                onChange={(e) => setDaysToAdd(e.target.value)}
+                placeholder="Ex: 30"
+                required
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setDaysToAdd("7")}
+              >
+                7 dias
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setDaysToAdd("15")}
+              >
+                15 dias
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setDaysToAdd("30")}
+              >
+                30 dias
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setDaysToAdd("90")}
+              >
+                90 dias
+              </Button>
+            </div>
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? "Adicionando..." : "Adicionar Tempo Grátis"}
             </Button>
           </form>
         </DialogContent>
