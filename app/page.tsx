@@ -84,6 +84,49 @@ const Home = async () => {
           <BannerCarousel banners={banners} />
         </section>
 
+        {/* Tipos de Estabelecimentos (Visual Identity Categories) */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold">Tipos de Estabelecimentos</h2>
+            <Link
+              href="/barbershops"
+              className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+            >
+              Ver todos <ArrowRightIcon size={14} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
+            {[
+              { title: "Barbearias", imageUrl: "/barba.svg" },
+              { title: "Cabelo", imageUrl: "/cabelo.svg" },
+              { title: "Unhas", imageUrl: "/hidratacao.svg" },
+              { title: "Sobrancelhas & Cílios", imageUrl: "/sobrancelha.svg" },
+              { title: "Maquiagem", imageUrl: "/acabamento.svg" },
+              { title: "Tatuagem & Piercing", imageUrl: "/massagem.svg" },
+            ].map((option) => (
+              <Link
+                key={option.title}
+                href={`/barbershops?type=${encodeURIComponent(option.title)}`}
+                className="group flex flex-col items-center justify-center gap-3 rounded-2xl border bg-card p-5 text-center transition-all hover:border-primary hover:shadow-xl hover:shadow-primary/5"
+              >
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-secondary/80 transition-colors group-hover:border-primary/50 group-hover:bg-primary/20">
+                  <Image
+                    src={option.imageUrl}
+                    width={28}
+                    height={28}
+                    alt={option.title}
+                    className="object-contain brightness-90 filter group-hover:brightness-100"
+                  />
+                </div>
+                <span className="w-full truncate text-xs font-semibold text-zinc-200 group-hover:text-amber-400">
+                  {option.title}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* Busca Rápida / Categorias (Mercado Livre / OLX Style) */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
