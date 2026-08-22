@@ -75,6 +75,9 @@ const AdminDashboardPage = async () => {
     })),
     barbershops: user.barbershops.map((bs: any) => ({
       ...bs,
+      subscriptionEndsAt: bs.subscriptionEndsAt
+        ? bs.subscriptionEndsAt.toISOString()
+        : null,
       createdAt: bs.createdAt.toISOString(),
       updatedAt: bs.updatedAt.toISOString(),
     })),
@@ -113,7 +116,10 @@ const AdminDashboardPage = async () => {
         <FeaturedManagement plans={serializedFeaturedPlans} />
 
         {/* Gerenciamento de Usuários (Clientes e Estabelecimentos) */}
-        <UsersManagement users={serializedUsers} />
+        <UsersManagement
+          users={serializedUsers}
+          pricingPlans={serializedPricingPlans}
+        />
       </div>
     </div>
   )

@@ -79,6 +79,7 @@ model Barbershop {
   stripeSubscriptionId String?
   subscriptionStatus  String?             @default("inactive")
   subscriptionPlanId  String?
+  subscriptionEndsAt  DateTime?
   userId        String?
   user          User?               @relation(fields: [userId], references: [id])
   createdAt     DateTime            @default(now())

@@ -19,9 +19,13 @@ import { Input } from "@/app/_components/ui/input"
 
 interface UsersManagementProps {
   users: any[]
+  pricingPlans?: any[]
 }
 
-const UsersManagement = ({ users }: UsersManagementProps) => {
+const UsersManagement = ({
+  users,
+  pricingPlans = [],
+}: UsersManagementProps) => {
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [clientDetailsUser, setClientDetailsUser] = useState<any>(null)
   const [editBarbershopUser, setEditBarbershopUser] = useState<any>(null)
@@ -201,6 +205,68 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
     toast.info("Função Emitir cobrança será implementada futuramente.")
   }
 
+  const renderPlanInfo = (user: any) => {
+    if (
+      user.role !== "BARBERSHOP" &&
+      (!user.barbershops || user.barbershops.length === 0)
+    ) {
+      return <span className="text-muted-foreground">-</span>
+    }
+    const barbershop = user.barbershops?.[0]
+    if (!barbershop) {
+      return <span className="text-muted-foreground">-</span>
+    }
+
+    let planName = "Plano Padrão"
+    if (barbershop.subscriptionPlanId && pricingPlans) {
+      const matchedPlan = pricingPlans.find(
+        (p: any) => p.priceId === barbershop.subscriptionPlanId,
+      )
+      if (matchedPlan) {
+        planName = matchedPlan.name
+      }
+    } else if (barbershop.description) {
+      if (barbershop.description.toLowerCase().includes("semestral")) {
+        planName = "Semestral"
+      } else if (barbershop.description.toLowerCase().includes("anual")) {
+        planName = "Anual"
+      } else if (barbershop.description.toLowerCase().includes("mensal")) {
+        planName = "Mensal"
+      } else {
+        planName = barbershop.description
+      }
+    }
+
+    const now = new Date()
+    const endsAt = barbershop.subscriptionEndsAt
+      ? new Date(barbershop.subscriptionEndsAt)
+      : null
+    const daysRemaining = endsAt
+      ? Math.ceil((endsAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+      : null
+
+    return (
+      <div className="flex flex-col text-xs">
+        <span className="font-semibold text-foreground">{planName}</span>
+        {daysRemaining !== null ? (
+          <span
+            className={
+              daysRemaining > 0
+                ? "text-muted-foreground"
+                : "font-medium text-red-500"
+            }
+          >
+            {daysRemaining > 0
+              ? `${daysRemaining} dia${daysRemaining === 1 ? "" : "s"} restantes`
+              : "Expirado / Vencido"}
+          </span>
+        ) : (
+          <span className="text-muted-foreground">Sem data de término</span>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-bold">
@@ -214,6 +280,7 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
               <th className="p-3">Nome</th>
               <th className="p-3">E-mail</th>
               <th className="p-3">Tipo</th>
+              <th className="p-3">Plano Atual</th>
               <th className="p-3 text-right">Ações</th>
             </tr>
           </thead>
@@ -250,6 +317,7 @@ const UsersManagement = ({ users }: UsersManagementProps) => {
                     {user.role}
                   </Badge>
                 </td>
+                <td className="p-3">{renderPlanInfo(user)}</td>
                 <td className="space-x-2 p-3 text-right">
                   <Button
                     size="sm"

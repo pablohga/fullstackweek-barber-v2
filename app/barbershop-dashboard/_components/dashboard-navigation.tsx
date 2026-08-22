@@ -9,6 +9,7 @@ import {
   UsersIcon,
   BarChart3Icon,
   CalendarDaysIcon,
+  SparklesIcon,
 } from "lucide-react"
 
 export const DashboardNavigation = () => {
@@ -47,6 +48,14 @@ export const DashboardNavigation = () => {
             <span>Navegação:</span>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
+            <Button
+              size="sm"
+              variant="ghost"
+              className="shrink-0 gap-1.5 text-xs font-semibold"
+              onClick={() => scrollToSection("section-destaque")}
+            >
+              <SparklesIcon size={14} /> Destaque
+            </Button>
             <Button
               size="sm"
               variant="ghost"
